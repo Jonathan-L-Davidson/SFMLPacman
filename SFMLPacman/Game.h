@@ -1,42 +1,62 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include "Global.h"
 #include "Entities.h"
+
+struct Ghosties {
+	Ghosty blinky;	// Red ghost, chases the player.
+	Ghosty pinky;	// Pink ghost, ambushes the player.
+	Ghosty inky;	// Cyan ghost, unpredictable, can act like Blinky and Pinky.
+	Ghosty clyde;	// Orange ghost, stupid ghost who acts like Blinky however flees when near.
+};
 
 class Game {
 
 	private:
-
-		int ghostAmount = 4;
-
-		//Ghosties _ghostList[ghostAmount];
-		int* _score;
+		// Pointer to the score of the game.
+		int* _score;  // Possible to store it as a global value and reference it, however, for security, encapsulation can work just as well.
 
 	protected:
 
-		Pacman _pacman;
+		// Struct of all entities in the game. When you require more entities, insert them here.
+		struct Entities {
+			Pacman pacman;
+			Munchie munchie;
+			Ghosties ghosts;
+		};
 
-		enum GameState { RUNNING = 1, PAUSED, QUIT};
+		enum GameState { RUNNING = 1, PAUSED, MENU, QUIT}; // Used to determine how the game is being used. RUNNING by default is 1, the rest go up in increments.
 
-		//	sf::RenderWindow window(sf::VideoMode(res.x, res.y, 32), "SFML Pacman", sf::Style::Titlebar | sf::Style::Close);
+		// Window and viewport values including a clock definition.
 		sf::RenderWindow* _window;
 		sf::VideoMode* _videomode;
 		sf::Clock* _clock;
 		sf::Event* _event;
 		sf::View* _view;
 
+		// Text values for pause menu and start screen. More can be added here for GUI.
+		// Later on this can be expanded and put into a seperate class and drawn from a list.
 		sf::Font _font;
 		sf::Text _pauseMessage;
+		std::string _messageString;
+		sf::RectangleShape _menuBackground; // Overlays during pause screen.
+		bool _pauseButtonBuffer; // Used to check if the player is holding the pause button down.
 
-		Resolution _res;
+		Resolution _res; // Resolution based from the global definition.
 
-		GameState _gameState;
-		float _deltaTime;
+		GameState _gameState; // Enum definiton.
+		
+		float _deltaTime; // Used for smoothing out gameplay based on the framerate.
+
+		std::string _resourceDir = resourceDir; // Directory for files.
+
 
 	public:
 		Game();
 		~Game();
-		void virtual LoadGame();
-		void virtual Update();
-		void virtual Draw();
+
+		void virtual LoadGame(); // Initialises pointers, starts values and assigns the correct data for values.
+		void virtual Update(); // This is called every frame. Only use this for processing data, treat it like a looping main().
+		void virtual Draw(); // Used to render each object each frame.
+		void virtual PauseGame(); // Public call to pause the game if required.
 };
 

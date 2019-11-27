@@ -1,57 +1,46 @@
-#include "Entities.h"
 #include "Global.h"
-#include <iostream>
+#include "Entities.h"
+
 
 Entity::Entity() {
-	LoadEntity();
 }
 
 Entity::~Entity()
 {
-	delete _entityTex;
-	delete _entitySize;
-//	delete _entitySourceRect;
 	delete _spriteBlendMode;
-	//delete _spriteColor;
-	//delete _deathSound;
+	delete _res;
 }
 
 void Entity::LoadEntity()
 {
 
 	_resourceDir = resourceDir;
-	_entityName = "entity";
+	
+	if (!_entityName.length()) { _entityName = "entity"; }
+
+
 
 	// Load Pacman
-	_entityTex = new sf::Texture;
-	_entityTex->loadFromFile(_resourceDir + _entityName + ".tga");
+	_entityTex.loadFromFile(_resourceDir + "sprites/" + _entityName + ".tga");
 
-	_entitySize = new sf::Vector2f(32, 32);
+	if (!_entitySize.x && !_entitySize.y) { _entitySize = sf::Vector2f(32, 32); }
 
-	_entitySourceRect = sf::IntRect(0.0f, 0.0f, _entitySize->x, _entitySize->y);
 
-	_entitySprite.setTexture(*_entityTex);
-	_entitySprite.setPosition(150, 150);
-	_entitySprite.setOrigin(*_entitySize / 2.f);
+	_entitySourceRect = sf::IntRect(0.0f, 0.0f, _entitySize.x, _entitySize.y);
+
+	_entitySprite.setTexture(_entityTex);
+	//_entitySprite.setPosition(0,0);
 	_entitySprite.setTextureRect(_entitySourceRect);
+	_entitySprite.setOrigin(_entitySize / 2.f);
 
 
-	_entityDirection = dirUP;
+	_entityDirection = dirRIGHT;
 	_entityStat = LIVING;
-
-	_animated = false; // Not animated by default.
-
-	_keyframeCount = 0;
-	_keyframeDelay = 0;
-	_keyframeInterval = 0;
-	_keyframe = 0;
 
 	_spriteBlendMode = new sf::BlendMode;
 	_spriteColor = sf::Color::Transparent;
 
-	buffer.loadFromFile(_resourceDir + _entityName + "_death.ogg");
-	
-	_deathSound.setBuffer(buffer);
+	_res = new Resolution;
 
 }
 
@@ -66,7 +55,7 @@ void Entity::UpdateSprite() {
 				_keyframe = 0;
 			}
 			
-			_keyframePos = _entitySize->x * _keyframe;
+			_keyframePos = _entitySize.x * _keyframe;
 			
 			_keyframe++;
 			
@@ -78,48 +67,16 @@ void Entity::UpdateSprite() {
 	}
 	
 	if (_entityStat == LIVING) {
-		_entitySourceRect = sf::IntRect(_keyframePos, _entityDirection, _entitySize->x, _entitySize->y);
+		_entitySourceRect = sf::IntRect(_keyframePos, _entityDirection, _entitySize.x, _entitySize.y);
 		_entitySprite.setTextureRect(_entitySourceRect);
 	}
 }
 
 
 void Entity::Update(float &deltaTime) {
-	if (_entityStat == DYING) {
-		PlayDeathAnim();
-		return;
-	}
-
 	UpdateSprite();
 }
 
-void Entity::PlayDeathAnim() {
-
-	if (_deathKeyframeInterval > _deathKeyframeDelay) {
-		_deathKeyframePos = _entitySize->x * _deathKeyframe;
-
-		_deathKeyframe++;
-	}
-	else {
-		_deathKeyframeInterval++;
-	}
-	
-	// If animation has finished.
-	if (_deathKeyframePos >= _deathKeyframeCount) {
-		delete this;
-		return;
-	}
-
-	_entitySourceRect = sf::IntRect(_deathKeyframePos, _entityDirection, _entitySize->x, _entitySize->y);
+void Entity::SetPosition(sf::Vector2f pos) {
+	_entitySprite.setPosition(pos);
 }
-
-void Entity::Death() {
-
-	if (_entityStat != DYING)	return;
-
-	_deathSound.play();
-	_entityStat = DYING;
-	
-}
-
-

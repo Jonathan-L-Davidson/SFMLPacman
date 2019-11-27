@@ -1,6 +1,12 @@
 #include "Game.h"
-#include <algorithm>
 #include "Entities.h"
+#include <algorithm>
+
+sf::Text* ResetOrigin(sf::Text* text) {
+	sf::FloatRect textRect = text->getLocalBounds();
+	text->setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+	return text;
+}
 
 Game::Game() {
 	LoadGame();
@@ -27,30 +33,34 @@ void Game::LoadGame() {
 		_ghostList[i] = new Ghosties(i);
 	}*/
 
-//	_pacman = new Pacman;
-
 	_clock = new sf::Clock;
+
+	munch.SetPosition(sf::Vector2f(_res.x / 2, _res.y / 2));
 
 	_videomode = new sf::VideoMode(_res.x, _res.y, 32);
 	_window = new sf::RenderWindow(*_videomode, "Pacman", sf::Style::Titlebar | sf::Style::Close);
+	_window->setFramerateLimit(60);
 
-
-	_font.loadFromFile("Resources/sansation.ttf");
+	_font.loadFromFile(_resourceDir + "Fonts/sansation.ttf");
 
 	_pauseMessage.setFont(_font);
 	_pauseMessage.setCharacterSize(40);
-	_pauseMessage.setPosition(170.f, 150.f);
+	_messageString = "Welcome to Pacman!\nPress space to start the game";
+	_pauseMessage.setString(_messageString);
 	_pauseMessage.setFillColor(sf::Color::White);
-	_pauseMessage.setString("Welcome to Pacman!\nPress space to start the game");
-
+	ResetOrigin(&_pauseMessage);
+	_pauseMessage.setPosition(_res.x / 2, _res.y / 2);
+	_menuBackground.setSize(sf::Vector2f(_res.x, _res.y));
+	_menuBackground.setFillColor(sf::Color(30, 30, 30, 130));
 
 	_view = new sf::View;
 
 	_deltaTime = _clock->restart().asSeconds();
 
-	_gameState = PAUSED;
+	_gameState = MENU;
 
 }
+
 void Game::Update() {
 
 	while (_window->isOpen()) {
@@ -72,21 +82,44 @@ void Game::Update() {
 			}
 
 			// PLAY - SPACEBAR
-			if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))) {
+			if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) && _gameState == MENU) {
 				if (_gameState != RUNNING) {
 					// Start the game 
 					_gameState = RUNNING;
 					_clock->restart();
+
 				}
 			}
+
+			// PAUSE - P (Also checks if pauseButton is being held down)
+			if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::P)) && !_pauseButtonBuffer) {
+				if (_gameState == RUNNING) {
+					_gameState = PAUSED;
+					_pauseButtonBuffer = true;
+
+					_messageString = "GAME PAUSED";
+					_pauseMessage.setString(_messageString);
+					ResetOrigin(&_pauseMessage);
+					_pauseMessage.setPosition(_res.x / 2, _res.y / 2);
+					_messageString.append("\nPress P to continue.\n\nPress R to restart.");
+
+				} else if (_gameState == PAUSED) {
+					_gameState = RUNNING;
+					_clock->restart();
+				}
+			}
+
+			if (((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::P)))	_pauseButtonBuffer = false;
 		}
 
 
 		// MAIN GAME LOOP.
-		if (_gameState == RUNNING)
+		if (_gameState == RUNNING && _gameState != PAUSED)
 		{
 			// Every tick, reset deltaTime.
 			_deltaTime = _clock->restart().asSeconds();
+
+			munch.UpdateMunch();
 
 			_pacman.UpdatePacman(_deltaTime);
 			
@@ -107,18 +140,27 @@ void Game::Draw() {
 	_window->clear();
 
 	// Drawing objects goes here!
-
-	if (_gameState == RUNNING)
-	{
+	if (_gameState != MENU) {
 		_window->draw(_pacman.GetSprite());
 
-	}
-	else
-	{
+		_window->draw(munch.GetSprite());
+
+		if (_gameState == PAUSED) {
+			_window->draw(_menuBackground);
+			// Draw the pause message
+			_window->draw(_pauseMessage);
+		}
+	} else {
 		// Draw the pause message
+		_window->draw(_menuBackground);
 		_window->draw(_pauseMessage);
 	}
 
 	// Display the drawn objects.
 	_window->display();
 }
+
+void Game::PauseGame() {
+	_gameState = PAUSED;
+}
+

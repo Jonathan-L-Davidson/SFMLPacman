@@ -4,7 +4,6 @@
 // Organise code into different files.
 // Tidy code.
 // Follow each week's tutorial.
-// Make a more optimised way to open and close pacman's mouth.
 // Pause menu.
 // UI.
 // Map creation.
@@ -14,9 +13,10 @@
 // Smooth edge wraps.
 
 #include "Game.h"
+#include "Entities.h"
 
 int main() {
-	Game game;
+	Game* game = new Game;
 
 	return 0;
 }

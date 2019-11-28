@@ -1,6 +1,8 @@
 #pragma once
 #include "Global.h"
 #include "Entities.h"
+#include "Tile.h"
+
 
 struct Ghosties {
 	Ghosty blinky;	// Red ghost, chases the player.

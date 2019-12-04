@@ -1,5 +1,5 @@
-#include "Global.h"
-#include "Entities.h"
+#include "headers/Global.h"
+#include "headers/Entities.h"
 
 // Not intended to be used as an entity. Rather a base parent to base all other instances of edibles off of.
 

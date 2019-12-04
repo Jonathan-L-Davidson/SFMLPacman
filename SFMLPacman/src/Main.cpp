@@ -12,8 +12,8 @@
 // Score.
 // Smooth edge wraps.
 
-#include "Game.h"
-#include "Entities.h"
+#include "headers/Game.h"
+#include "headers/Entities.h"
 
 int main() {
 	Game* game = new Game;

@@ -1,6 +1,8 @@
 #pragma once
 #include "Global.h"
 #include "Entities.h"
+#include "Grid.h"
+#include "AIHandling.h"
 
 struct Ghosties {
 	Ghosty blinky;	// Red ghost, chases the player.
@@ -17,13 +19,6 @@ class Game {
 	protected:
 
 		std::vector<std::vector<Tile*>>* _tiles; //A vector of vectors
-
-		// Struct of all entities in the game. When you require more entities, insert them here.
-		struct Entities {
-			Pacman pacman;
-			Munchie munchie;
-			Ghosties ghosts;
-		};
 		
 		Pacman* _pacman;
 
@@ -52,6 +47,9 @@ class Game {
 
 		std::string _resourceDir = resourceDir; // Directory for files.
 
+		Grid _grid;
+		AIHandler _aiHandler;
+
 
 	public:
 		Game();
@@ -60,24 +58,10 @@ class Game {
 		// Pointer to the score of the game.
 		int* _score;
 
-		Entities _entities;
-
 		void virtual LoadGame(); // Initialises pointers, starts values and assigns the correct data for values.
 		void virtual Update(); // This is called every frame. Only use this for processing data, treat it like a looping main().
 		void virtual Draw(); // Used to render each object each frame.
 		void virtual PauseGame(); // Public call to pause the game if required.
-	
-		void LoadTiles(int levelIndex);
-		Tile* LoadTile(const char tileType, int x, int y);
-		Tile* LoadTile(const char name, TileCollision collision);
-		Tile* LoadEdibleTile(int x, int y, std::string tileType);
-		Tile* LoadStartTile(int x, int y);
-		Tile* LoadGhostStartTile(int x, int y);
-		TileCollision GetCollision(int x, int y);
-		void DrawTiles();
-
-		int GetWidth();
-		int GetHeight();
 
 };
 

@@ -1,6 +1,5 @@
-#include "Game.h"
-#include "Entities.h"
-#include "Tile.h"
+#include "headers/Game.h"
+#include "headers/Entities.h"
 #include <algorithm>
 #include <fstream>
 
@@ -39,7 +38,7 @@ void Game::LoadGame() {
 
 	_clock = new sf::Clock;
 
-	munch.SetPosition(sf::Vector2f(_res.x / 2, _res.y / 2));
+	//munch.SetPosition(sf::Vector2f(_res.x / 2, _res.y / 2));
 
 	_videomode = new sf::VideoMode(_res.x, _res.y, 32);
 	_window = new sf::RenderWindow(*_videomode, "Pacman", sf::Style::Titlebar | sf::Style::Close);
@@ -62,6 +61,8 @@ void Game::LoadGame() {
 	_deltaTime = _clock->restart().asSeconds();
 
 	_gameState = MENU;
+
+	_pacman = new Pacman;
 
 }
 
@@ -123,9 +124,9 @@ void Game::Update() {
 			// Every tick, reset deltaTime.
 			_deltaTime = _clock->restart().asSeconds();
 
-			munch.UpdateMunch();
+			//munch.UpdateMunch();
 
-			_pacman.UpdatePacman(_deltaTime);
+			_pacman->UpdatePacman(_deltaTime);
 			
 			/*
 			for (int i = 0; i < ghostAmount; i++) {
@@ -145,9 +146,9 @@ void Game::Draw() {
 
 	// Drawing objects goes here!
 	if (_gameState != MENU) {
-		_window->draw(_pacman.GetSprite());
+		_window->draw(_pacman->GetSprite());
 
-		_window->draw(munch.GetSprite());
+		//_window->draw(munch.GetSprite());
 
 		if (_gameState == PAUSED) {
 			_window->draw(_menuBackground);
@@ -167,140 +168,3 @@ void Game::Draw() {
 void Game::PauseGame() {
 	_gameState = PAUSED;
 }
-
-void Game::LoadTiles(int levelIndex)
-{
-	// Load the level and ensure all of the lines are the same length.
-	int width;
-	std::vector<std::string>* lines = new std::vector<std::string>();
-
-	std::fstream stream;
-
-	std::string ss;
-	ss = _resourceDir + std::to_string(levelIndex) + ".txt";
-	stream.open(ss, std::fstream::in);
-
-	char* line = new char[256];
-	stream.getline(line, 256);
-	std::string* sline = new std::string(line);
-	width = sline->size();
-	while (!stream.eof())
-	{
-		lines->push_back(*sline);
-		if (sline->size() != width)
-			std::cout << "Bad Level Load\n";
-		stream.getline(line, 256);
-		delete sline;
-		sline = new std::string(line);
-	}
-
-	delete[] line;
-	delete sline;
-
-	// Allocate the tile grid.
-	_tiles = new std::vector<std::vector<Tile*>>(width, std::vector<Tile*>(lines->size()));
-
-	// Loop over every tile position,
-	for (int y = 0; y < GetHeight(); ++y)
-	{
-		for (int x = 0; x < GetWidth(); ++x)
-		{
-			// to load each tile.
-			char tileType = lines->at(y)[x];
-			(*_tiles)[x][y] = LoadTile(tileType, x, y);
-		}
-	}
-
-	delete lines;
-}
-
-Tile* Game::LoadTile(const char tileType, int x, int y)
-{
-	switch (tileType)
-	{
-		// Blank space
-	case '.':
-		return new Tile(nullptr, TileCollision::Passable);
-
-		// Munchie
-	case 'M':
-		return LoadTile("Munchie", TileCollision::Passable);
-
-		// Floating platform
-	case 'C':
-		return LoadTile("Cherry", TileCollision::Passable);
-
-		// Various enemies
-	case 'G':
-		return LoadGhostStartTile(x, y);
-		
-		// Wall
-	case '#':
-		return LoadTile("Wall", TileCollision::Impassable);
-
-		// Player 1 start point
-	case '1':
-		return LoadStartTile(x, y);
-
-		// Unknown tile type character
-	default:
-		std::cout << "Unsupported tile type character " << tileType;
-		return nullptr;
-	}
-}
-
-Tile* Game::LoadTile(const char name, TileCollision collision)
-{
-	std::string ss;
-	ss = "Content/Tiles/" + name + ".png";
-
-	sf::Texture* tex = new sf::Texture;
-	tex->loadFromFile(ss);
-	sf::Sprite* sprite = new sf::Sprite;
-	sprite->setTexture(*tex);
-	return new Tile(sprite, collision);
-}
-
-Tile* Game::LoadStartTile(int x, int y)
-{
-	if (_pacman != nullptr)
-		std::cout << "A level may only have one starting point.";
-
-	
-	_pacman->SetPosition(sf::Vector2f(x, y));
-
-	return new Tile(nullptr, TileCollision::Passable);
-}
-
-
-Tile* Game::LoadGhostStartTile(int x, int y)
-{
-	/* TO DO - Program ghosties
-	Vector2 position = RectangleExtensions::GetBottomCenter(&(GetBounds(x, y)));
-	_enemies.push_back(new Enemy(this, position, spriteSet));
-
-	return new Tile(nullptr, TileCollision::Passable);
-	*/
-}
-
-/*
-Tile* Game::LoadEdibleTile(int x, int y, EdibleType tileType)
-{
-	sf::Vector2i position = sf::Vector2i(x, y);
-	_edibles.push_back(new Edible(this, new Vector2(position.X, position.Y)));
-
-	return new Tile(nullptr, TileCollision::Passable);
-}*/
-
-TileCollision Game::GetCollision(int x, int y)
-{
-	// Prevent escaping past the level ends.
-	if (x < 0 || x >= GetWidth())
-		return TileCollision::Impassable;
-	// Allow jumping past the level top and falling through the bottom.
-	if (y < 0 || y >= GetHeight())
-		return TileCollision::Passable;
-
-	return _tiles->at(x).at(y)->Collision;
-}
-

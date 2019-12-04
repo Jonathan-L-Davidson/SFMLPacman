@@ -1,5 +1,5 @@
-#include "Global.h"
-#include "Entities.h"
+#include "headers/Global.h"
+#include "headers/Entities.h"
 
 
 Entity::Entity() {
@@ -7,7 +7,6 @@ Entity::Entity() {
 
 Entity::~Entity()
 {
-	delete _spriteBlendMode;
 	delete _res;
 }
 
@@ -21,14 +20,14 @@ void Entity::LoadEntity()
 
 
 	// Load Pacman
-	_entityTex.loadFromFile(_resourceDir + "sprites/" + _entityName + ".tga");
+	_entityTexture.loadFromFile(_resourceDir + "sprites/" + _entityName + ".tga");
 
 	if (!_entitySize.x && !_entitySize.y) { _entitySize = sf::Vector2f(32, 32); }
 
 
 	_entitySourceRect = sf::IntRect(0.0f, 0.0f, _entitySize.x, _entitySize.y);
 
-	_entitySprite.setTexture(_entityTex);
+	_entitySprite.setTexture(_entityTexture);
 	//_entitySprite.setPosition(0,0);
 	_entitySprite.setTextureRect(_entitySourceRect);
 	_entitySprite.setOrigin(_entitySize / 2.f);
@@ -37,7 +36,6 @@ void Entity::LoadEntity()
 	_entityDirection = dirRIGHT;
 	_entityStat = LIVING;
 
-	_spriteBlendMode = new sf::BlendMode;
 	_spriteColor = sf::Color::Transparent;
 
 	_res = new Resolution;

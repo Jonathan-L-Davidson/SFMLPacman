@@ -1,30 +1,120 @@
-﻿  Entity.cpp
-c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\entity.cpp(29): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+﻿  Grid.cpp
+  Node.cpp
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\node.cpp(4): warning C4244: 'argument': conversion from 'const int' to 'T', possible loss of data
           with
           [
               T=float
           ]
-          and
-          [
-              T=int
-          ]
-c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\entity.cpp(29): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
-          with
-          [
-              T=int
-          ]
-c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\entity.cpp(58): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
-          with
-          [
-              T=float
-          ]
-c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\entity.cpp(70): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-          with
-          [
-              T=float
-          ]
-          and
-          [
-              T=int
-          ]
-  SFMLPacman.vcxproj -> C:\Users\Jonathan\source\repos\SFMLPacman\Debug\SFMLPacman.exe
+  AIHandling.cpp
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.h(33): error C2460: 'AIHandler::mPathDrawer': uses 'AIHandler', which is being defined
+  c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.h(12): note: see declaration of 'AIHandler'
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(8): error C2614: 'AIHandler': illegal member initialization: 'mCounter' is not a base or member
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(9): error C2614: 'AIHandler': illegal member initialization: 'mDrawn' is not a base or member
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(13): error C2039: 'init': is not a member of 'AIHandler'
+  c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.h(12): note: see declaration of 'AIHandler'
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(15): error C2065: 'mDrawPath': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(16): error C2065: 'mCounter': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(17): error C2065: 'mDrawn': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(21): error C2065: 'mDrawPath': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(24): error C2065: 'mDrawPath': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(24): error C2672: 'std::reverse': no matching overloaded function found
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(24): error C2780: 'void std::reverse(const _BidIt,const _BidIt)': expects 2 arguments - 1 provided
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility(3864): note: see declaration of 'std::reverse'
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(27): error C2039: 'drawStep': is not a member of 'AIHandler'
+  c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.h(12): note: see declaration of 'AIHandler'
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(29): error C2065: 'mDrawClock': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(31): error C2065: 'mDrawPath': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(31): error C2065: 'mCounter': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(33): error C2065: 'mDrawPath': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(33): error C2065: 'mCounter': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(34): error C2065: 'mDrawClock': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(35): error C2065: 'mCounter': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(40): error C2065: 'mDrawn': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(45): error C2039: 'isDrawn': is not a member of 'AIHandler'
+  c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.h(12): note: see declaration of 'AIHandler'
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(47): error C2065: 'mDrawn': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(52): error C2653: 'PathSolver': is not a class or namespace name
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(53): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(58): error C2550: 'PathSolver': constructor initializer lists are only allowed on constructor definitions
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(59): warning C4508: 'PathSolver': function should return a value; 'void' return type assumed
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(61): error C2510: 'PathSolver': left of '::' must be a class/struct/union
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(63): error C2065: 'mSolved': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(63): error C2065: 'mPathDrawer': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(64): error C2065: 'mPathDrawer': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(67): error C2510: 'PathSolver': left of '::' must be a class/struct/union
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(69): error C2065: 'mGridToSolve': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(70): error C2065: 'mTargetNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(70): error C2065: 'mGridToSolve': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(71): error C2065: 'mStartNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(71): error C2065: 'mGridToSolve': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(73): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(73): error C2065: 'mStartNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(75): error C3861: 'isGridCorrect': identifier not found
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(78): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(78): error C2065: 'mTargetNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(80): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(80): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(82): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(83): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(83): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(84): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(84): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(86): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(87): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(87): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(89): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(93): error C2065: 'mClosedNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(93): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(95): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(95): error C2065: 'mTargetNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(97): error C2065: 'mSolved': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(98): error C2065: 'mSolveTime': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(99): error C2065: 'mPathDrawer': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(99): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(99): error C2065: 'mStartNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(103): error C2065: 'mGridToSolve': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(103): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(105): error C2065: 'mClosedNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(105): error C3861: 'isInVector': identifier not found
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(106): error C3861: 'handleNeighbour': identifier not found
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(110): error C3861: 'restartSolver': identifier not found
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(116): error C2510: 'PathSolver': left of '::' must be a class/struct/union
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(118): error C2065: 'mStartNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(118): error C2065: 'mTargetNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(120): error C2065: 'mStartNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(120): error C2065: 'mTargetNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(126): error C2510: 'PathSolver': left of '::' must be a class/struct/union
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(127): error C2270: 'isInVector': modifiers not allowed on nonmember functions
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(131): error C2510: 'PathSolver': left of '::' must be a class/struct/union
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(133): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(133): error C3861: 'getDistance': identifier not found
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(134): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(137): error C2065: 'mTargetNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(137): error C3861: 'getDistance': identifier not found
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(138): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(139): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(140): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(144): error C2510: 'PathSolver': left of '::' must be a class/struct/union
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(158): error C2510: 'PathSolver': left of '::' must be a class/struct/union
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(160): error C2065: 'mCurrentNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(161): error C2065: 'mTargetNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(162): error C2065: 'mStartNode': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(163): error C2065: 'mGridToSolve': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(164): error C2065: 'mClosedNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(165): error C2065: 'mOpenNodes': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(166): error C2065: 'mSolved': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(167): error C2065: 'mSolveTime': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(170): error C2510: 'PathSolver': left of '::' must be a class/struct/union
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(172): error C2065: 'mSolved': undeclared identifier
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(175): error C2510: 'PathSolver': left of '::' must be a class/struct/union
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\aihandling.cpp(177): error C2065: 'mSolveTime': undeclared identifier
+  Game.cpp
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\game.h(53): error C2143: syntax error: missing ';' before 'public'
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\game.h(53): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\src\game.cpp(12): error C2512: 'Grid': no appropriate default constructor available
+  c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\grid.h(12): note: see declaration of 'Grid'
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\src\game.cpp(43): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+  Main.cpp
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\game.h(53): error C2143: syntax error: missing ';' before 'public'
+c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\headers\game.h(53): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+  Generating Code...

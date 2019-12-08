@@ -1,26 +1,21 @@
 #pragma once
-#include "Global.h"
+#include "Global.hpp"
 #include "Entities.h"
-#include "Grid.h"
-#include "AIHandling.h"
-
-struct Ghosties {
-	Ghosty blinky;	// Red ghost, chases the player.
-	Ghosty pinky;	// Pink ghost, ambushes the player.
-	Ghosty inky;	// Cyan ghost, unpredictable, can act like Blinky and Pinky.
-	Ghosty clyde;	// Orange ghost, stupid ghost who acts like Blinky however flees when near.
-};
-
-class Tile;
-enum class TileCollision;
 
 class Game {
 
 	protected:
-
-		std::vector<std::vector<Tile*>>* _tiles; //A vector of vectors
 		
 		Pacman* _pacman;
+
+		Munchie* _munchies[munchieAmount];
+
+		PowerPellet* _pellets[pelletAmount];
+
+
+		Ghost* _ghosts[ghostAmount];
+
+		Fruit* _fruit;
 
 		enum GameState { RUNNING = 1, PAUSED, MENU, QUIT}; // Used to determine how the game is being used. RUNNING by default is 1, the rest go up in increments.
 
@@ -33,10 +28,10 @@ class Game {
 
 		// Text values for pause menu and start screen. More can be added here for GUI.
 		// Later on this can be expanded and put into a seperate class and drawn from a list.
-		sf::Font _font;
-		sf::Text _pauseMessage;
-		std::string _messageString;
-		sf::RectangleShape _menuBackground; // Overlays during pause screen.
+		sf::Font* _font;
+		sf::Text* _pauseMessage;
+		std::string* _messageString;
+		sf::RectangleShape* _menuBackground; // Overlays during pause screen.
 		bool _pauseButtonBuffer; // Used to check if the player is holding the pause button down.
 
 		Resolution _res; // Resolution based from the global definition.
@@ -47,21 +42,31 @@ class Game {
 
 		std::string _resourceDir = resourceDir; // Directory for files.
 
-		Grid _grid;
-		AIHandler _aiHandler;
+		void LoadEntities(); // Load the entities.
+		void LoadText();   // Load the text.
+		void LoadWindow(); // Load the window.
+		void LoadExtras(); // Misc/Unsorted things.
 
+		void UpdateEntities();
+		void UpdateEvent();
+
+		int _score;
+
+		int _scaredTimer;
 
 	public:
 		Game();
 		~Game();
 
-		// Pointer to the score of the game.
-		int* _score;
+		void ScareGhosts();
 
-		void virtual LoadGame(); // Initialises pointers, starts values and assigns the correct data for values.
-		void virtual Update(); // This is called every frame. Only use this for processing data, treat it like a looping main().
-		void virtual Draw(); // Used to render each object each frame.
-		void virtual PauseGame(); // Public call to pause the game if required.
+		void LoadGame(); // Initialises pointers, starts values and assigns the correct data for values.
+		void Update(); // This is called every frame. Only use this for processing data, treat it like a looping main().
+		void Draw(); // Used to render each object each frame.
+		void PauseGame(); // Public call to pause the game if required.
+		
+
+		sf::Text* ResetOrigin(sf::Text* text);
 
 };
 

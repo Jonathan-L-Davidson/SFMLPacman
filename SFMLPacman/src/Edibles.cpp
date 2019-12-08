@@ -1,7 +1,6 @@
-#include "headers/Global.h"
+#include "headers/Global.hpp"
 #include "headers/Entities.h"
-
-// Not intended to be used as an entity. Rather a base parent to base all other instances of edibles off of.
+#include "headers/Game.h"
 
 Edible::Edible() {
 //	LoadEdible();
@@ -11,8 +10,9 @@ void Edible::LoadEdible() {
 	LoadEntity();
 }
 
-void Edible::Eat(Pacman pacman) {
-	delete this;
+void Edible::OnHit(int& score) {
+	_eaten = true;
+	score += _scoreValue;
 }
 
 Munchie::Munchie() {
@@ -23,37 +23,66 @@ void Munchie::LoadMunchie() {
 	_entityName = "munchie";
 	_entitySize = sf::Vector2f(12, 12);
 
-	_animated = true;
-	_keyframeCount = 2;
-	_keyframeDelay = 20;
+	_animated = false;
 
 	_scoreValue = 50;
 
 	LoadEntity();
 }
 
-void Munchie::UpdateMunch() {
-	UpdateSprite();
-}
+Fruit::Fruit(FruitType type) {
+	_entityName = "fruit";
 
-Cherry::Cherry() {
-	_entityName = "cherry";
+	_entitySize = sf::Vector2f(32, 32);
 
-	_scoreValue = 100;
+
+	switch (type) {
+		case STRAWBERRY:
+			_keyframePos = 0;
+			_scoreValue = 300;
+			break;
+		case APPLE:
+			_keyframePos = _entitySize.x;
+			_scoreValue = 700;
+			break;
+		case CHERRY:
+			_keyframePos = _entitySize.x * 2;
+			_scoreValue = 100;
+			break;
+		case MELON:
+			_keyframePos = _entitySize.x * 3;
+			_scoreValue = 1000;
+			break;
+	}
 	
 	LoadEntity();
 }
 
+PowerPellet::PowerPellet() {
+	_entityName = "powerpellet";
+	
+	_entitySize = sf::Vector2f(16, 16);
 
-/*
-class Munchie : public Edible {
-public:
-	Munchie();
-	virtual ~Munchie();
-};
+	
+	_animated = true;
+	_keyframeCount = 2;
+	_keyframeDelay = 20;
 
-class Cherry : public Edible {
-public:
-	Cherry();
-	virtual ~Cherry();
-};*/
+	_scoreValue = 100;
+
+	LoadEntity();
+}
+
+void PowerPellet::HandleCollision(int& score, Entity* entity, Game* game) {
+
+	if (GetSprite().getGlobalBounds().intersects(entity->GetSprite().getGlobalBounds())) {
+		OnHit(score, game);
+	}
+
+}
+
+void PowerPellet::OnHit(int& score, Game* game) {
+	_eaten = true;
+	score += _scoreValue;
+	game->ScareGhosts();
+}

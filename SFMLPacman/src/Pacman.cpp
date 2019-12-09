@@ -14,8 +14,8 @@ void Pacman::LoadPacman()
 	_entityName = "pacman";
 	
 	_animated = true;
-	_keyframeCount = 2;
-	_keyframeDelay = 20;
+	_keyframeCount = 8;
+	_keyframeDelay = 1;
 
 	buffer.loadFromFile(_resourceDir + _entityName + "_death.ogg");
 
@@ -35,7 +35,7 @@ void Pacman::UpdatePacman(float deltaTime) {
 
 	Update(deltaTime);
 
-	HandleInput(deltaTime);
+	if(!_entityStat != LIVING)	HandleInput(deltaTime);
 }
 
 void Pacman::HandleInput(float &deltaTime) {
@@ -83,7 +83,9 @@ void Pacman::PlayDeathAnim() {
 
 	// If animation has finished.
 	if (_deathKeyframePos >= _deathKeyframeCount) {
-		delete this;
+		//delete this;
+		_entityStat = DEAD;
+		SetPosition(sf::Vector2f(0.f, 0.f));
 		return;
 	}
 
@@ -92,9 +94,10 @@ void Pacman::PlayDeathAnim() {
 
 void Pacman::Death() {
 
-	if (_entityStat != DYING)	return;
+	std::cout << std::endl << _entityName << " dies!\n";
 
-	_deathSound.play();
+
+	if (_entityStat == DYING)	return;
 	_entityStat = DYING;
 
 }

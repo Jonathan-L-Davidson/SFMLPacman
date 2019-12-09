@@ -1,4 +1,4 @@
-#include "headers/Global.h"
+#include "headers/Global.hpp"
 #include "headers/Entities.h"
 
 
@@ -17,13 +17,9 @@ void Entity::LoadEntity()
 	
 	if (!_entityName.length()) { _entityName = "entity"; }
 
-
-
-	// Load Pacman
-	_entityTexture.loadFromFile(_resourceDir + "sprites/" + _entityName + ".tga");
+	_entityTexture.loadFromFile(_resourceDir + "sprites/" + _entityName + "/" + _entityName + ".png");
 
 	if (!_entitySize.x && !_entitySize.y) { _entitySize = sf::Vector2f(32, 32); }
-
 
 	_entitySourceRect = sf::IntRect(0.0f, 0.0f, _entitySize.x, _entitySize.y);
 
@@ -77,4 +73,21 @@ void Entity::Update(float &deltaTime) {
 
 void Entity::SetPosition(sf::Vector2f pos) {
 	_entitySprite.setPosition(pos);
+}
+
+void Entity::HandleCollision(int& score, Entity* entity) {
+
+	if (GetSprite().getGlobalBounds().intersects(entity->GetSprite().getGlobalBounds())) {
+		OnHit(score);
+	}
+
+}
+
+void Entity::OnHit(int& score) {
+	return; // Do nothing.
+}
+
+void Entity::Death() {
+	std::cout << std::endl << _entityName << " dies!\n";
+	_entityStat = DEAD;
 }

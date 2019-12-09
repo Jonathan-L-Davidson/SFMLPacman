@@ -30,33 +30,24 @@
     <ClCompile Include="src\Pacman.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="headers\Node.cpp">
+    <ClCompile Include="src\UI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="headers\AIHandling.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="headers\Grid.cpp">
+    <ClCompile Include="src\Ghost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headers\Entities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="headers\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Global.h">
+    <ClInclude Include="headers\Entities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Node.h">
+    <ClInclude Include="headers\Global.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="headers\Grid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="headers\AIHandling.h">
+    <ClInclude Include="headers\UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

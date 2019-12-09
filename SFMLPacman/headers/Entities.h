@@ -1,7 +1,7 @@
 #pragma once
-#include "Global.h"
+#include "Global.hpp"
 
-
+struct Game;
 
 class Entity {
 
@@ -61,6 +61,7 @@ class Entity {
 		// --- Helpers Start ---
 		sf::Vector2f GetPosition() const { return _entitySprite.getPosition(); };
 		sf::Sprite GetSprite() const { return _entitySprite; };
+		std::string GetName() const { return _entityName; };
 		void Move(float x, float y) { return _entitySprite.move(x, y); };
 		void SetPosition(sf::Vector2f pos);
 		// --- Helpers End ---
@@ -72,6 +73,13 @@ class Entity {
 		void Update(float &deltaTime); // Should be looped for every entity tick. Deltatime must be given to sync the frames.
 		
 		void UpdateSprite(); // Used for sprite rendering, similar to Draw except it modies the entity sprite.
+
+		virtual void HandleCollision(int& score, Entity* entity);
+		virtual void OnHit(int& score);
+
+		virtual void Death();
+
+
 };
 
 class Pacman : public Entity {
@@ -97,32 +105,63 @@ class Pacman : public Entity {
 
 };
 
-class Ghosty : public Entity {
+class Ghost : public Entity {
+	private:
+		GhostType _ghostType;
+		
+		float _ghostSpeed = 150.f;
+
+		bool _scared;
+
+		void HandleAI();
+		void Death();
+
+		sf::Texture _ghostScaredTexture;
+		sf::Texture _ghostDeadTexture;
+
 
 	public:
-		Ghosty(int ghostType); // To do. Do math to make it so you can dynamically increase the amoutn of ghosts.
+		Ghost(GhostType ghostType); // To do. Do math to make it so you can dynamically increase the amoutn of ghosts.
+		~Ghost();
+		
+		void Revive();
 
+		void SetScared();
+		void CalmGhost();
+		void UpdateGhost();
+		void HandleCollision(Entity* entity);
+		void OnHit(Entity* entity);
 };
 
 class Edible : public Entity {
-	public:
+	protected:
 		int _scoreValue;
+		bool _eaten;
+	public:
 
+		bool IsEaten() const { return _eaten; };
 		Edible();
 		void LoadEdible();
-		void Eat(Pacman pacman);
-		//void ApplyEffect(Pacman pacman);
-
+		std::string GetName() const { return _entityName; };
+		void OnHit(int& score);
 };
 
 class Munchie : public Edible {
 	public:
 		Munchie();
 		void LoadMunchie();
-		void UpdateMunch();
+		
 };
 
-class Cherry : public Edible {
+class Fruit : public Edible {
 	public:
-		Cherry();
+		Fruit(FruitType type);
+};
+
+class PowerPellet : public Edible {
+	public:
+		PowerPellet();
+
+		void HandleCollision(int& score, Entity* entity, Game* game);
+		void OnHit(int& score, Game* game);
 };

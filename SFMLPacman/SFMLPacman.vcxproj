@@ -25,13 +25,20 @@
     <ClCompile Include="src\Ghost.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Pacman.cpp" />
+    <ClCompile Include="src\Sound.cpp" />
+    <ClCompile Include="src\Tile.cpp" />
     <ClCompile Include="src\UI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\Entities.h" />
     <ClInclude Include="headers\Game.h" />
     <ClInclude Include="headers\Global.hpp" />
+    <ClInclude Include="headers\Sound.h" />
+    <ClInclude Include="headers\Tile.h" />
     <ClInclude Include="headers\UI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\level.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

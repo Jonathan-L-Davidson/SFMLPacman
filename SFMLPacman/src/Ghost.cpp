@@ -1,6 +1,6 @@
 #include "headers/Global.hpp"
 #include "headers/Entities.h"
-
+#include "headers/Game.h"
 
 Ghost::Ghost(GhostType ghostType) {
 	_entityName = "ghost";
@@ -54,36 +54,34 @@ void Ghost::CalmGhost() {
 	_entitySprite.setTexture(_entityTexture);
 }
 
-void Ghost::HandleCollision(Entity* entity) {
+void Ghost::HandleCollision(Entity* entity, Game* game) {
 
 	if (GetSprite().getGlobalBounds().intersects(entity->GetSprite().getGlobalBounds())) {
-		OnHit(entity);
+		OnHit(entity, game);
 	}
 
 }
 
-void Ghost::OnHit(Entity* entity) {
+void Ghost::OnHit(Entity* entity, Game* game) {
 	// It's pacman!
 	if (entity->GetName() == "pacman") {
 		if (_entityStat == LIVING) {
-			if (_scared) {
-				Death();
-			} else {
-				entity->Death(); 
-			}
+			_scared ? Death(game) : entity->Death(game);
 		}
 
 	}
 }
 
-void Ghost::Death() {
+void Ghost::Death(Game* game) {
 	_entitySprite.setTexture(_ghostDeadTexture);
 	_entityStat = DEAD;
 
+	game->PlaySound("ghosteat.wav");
+	game->FreezeGame(15); // Pause the game for 15 frames;
 	std::cout << std::endl << _entityName << " dies!\n";
 }
 
-void Ghost::Revive() {
+void Ghost::Revive(Game* game) {
 	if (_entityStat == LIVING)	return;
 
 	_entitySprite.setTexture(_entityTexture);

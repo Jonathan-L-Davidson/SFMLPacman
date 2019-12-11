@@ -1,6 +1,7 @@
 #include "headers/Global.hpp"
 #include "headers/Entities.h"
 #include "headers/Game.h"
+#include "headers/Sound.h"
 
 Edible::Edible() {
 //	LoadEdible();
@@ -10,8 +11,9 @@ void Edible::LoadEdible() {
 	LoadEntity();
 }
 
-void Edible::OnHit(int& score) {
+void Edible::OnHit(int& score, Game* game) {
 	_eaten = true;
+	game->PlaySound("muncheat.wav");
 	score += _scoreValue;
 }
 
@@ -58,6 +60,12 @@ Fruit::Fruit(FruitType type) {
 	LoadEntity();
 }
 
+void Fruit::OnHit(int& score, Game* game) {
+	_eaten = true;
+	game->PlaySound("fruiteat.wav");
+	score += _scoreValue;
+}
+
 PowerPellet::PowerPellet() {
 	_entityName = "powerpellet";
 	
@@ -83,6 +91,7 @@ void PowerPellet::HandleCollision(int& score, Entity* entity, Game* game) {
 
 void PowerPellet::OnHit(int& score, Game* game) {
 	_eaten = true;
-	score += _scoreValue;
+	game->PlaySound("muncheat.wav");
 	game->ScareGhosts();
+	score += _scoreValue;
 }

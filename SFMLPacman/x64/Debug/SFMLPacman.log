@@ -1,12 +1,1 @@
-﻿  Main.cpp
-c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\main.cpp(32): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
-c:\users\jonathan\source\repos\sfmlpacman\sfmlpacman\main.cpp(49): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-          with
-          [
-              T=float
-          ]
-          and
-          [
-              T=int
-          ]
-  SFMLPacman.vcxproj -> C:\Users\Jonathan\source\repos\SFMLPacman\x64\Debug\SFMLPacman.exe
+﻿  SFMLPacman.vcxproj -> C:\Users\Jonathan\source\repos\SFMLPacman\x64\Debug\SFMLPacman.exe

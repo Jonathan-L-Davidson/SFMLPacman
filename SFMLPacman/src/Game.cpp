@@ -1,5 +1,7 @@
 #include "headers/Game.h"
 #include "headers/Entities.h"
+#include "headers/Game.h"
+#include "headers/Sound.h"
 #include <algorithm>
 #include <fstream>
 #include <cstdlib>
@@ -35,6 +37,8 @@ void Game::LoadGame() {
 
 	LoadEntities(); // Misc/Unsorted things.
 
+	LoadLevel(); // Load Hell.
+
 	LoadExtras(); // Misc/Unsorted things.
 
 	srand(time(NULL));
@@ -44,7 +48,6 @@ void Game::LoadGame() {
 		_munchies[i]->SetPosition(sf::Vector2f(rand() % static_cast<int>(X), rand() % static_cast<int>(Y)));
 	}
 
-	srand(time(NULL));
 	for (int i = 0; i < pelletAmount; i++) {
 		float& X = _res.x;
 		float& Y = _res.y;
@@ -63,10 +66,20 @@ void Game::Update() {
 
 		UpdateEvent();
 
-		// MAIN GAME LOOP.
-		if (_gameState == RUNNING && _gameState != PAUSED)
-		{
-			UpdateEntities();
+		switch (_gameState) {
+			case STARTING:
+				StartGame();
+				break;
+			case FROZEN:
+				if (_timeFrozen <= 0) {
+					_gameState = RUNNING;
+					_clock->restart();
+				}
+				_timeFrozen--;
+				break;
+			case RUNNING:
+				UpdateEntities();
+				break;
 		}
 
 		Draw();
@@ -169,23 +182,75 @@ void Game::LoadEntities() {
 		int typeGetter = (i + 1) % 4;
 
 		switch (typeGetter) {
-			case 0:
-				type = BLINKY;
-				break;
-			case 1:
-				type = INKY;
-				break;
-			case 2:
-				type = PINKY;
-				break;
-			case 3:
-				type = CLYDE;
-				break;
+		case 0:
+			type = BLINKY;
+			break;
+		case 1:
+			type = INKY;
+			break;
+		case 2:
+			type = PINKY;
+			break;
+		case 3:
+			type = CLYDE;
+			break;
 		}
 
 		_ghosts[i] = new Ghost(type);
 		_ghosts[i]->SetPosition(sf::Vector2f(50.f * i + 32, _res.y / 2));
 	}
+}
+
+void Game::LoadLevel() {
+
+	// Used from S2D Platformer.
+
+	// --- S2D PLATFORMER CODE START ---
+	// Load the level and ensure all of the lines are the same length.
+	int width;
+	std::vector<std::string>* lines = new std::vector<std::string>();
+	std::fstream stream;
+	std::stringstream ss;
+	ss << _resourceDir + "level.txt";
+	stream.open(ss.str(), std::fstream::in);
+
+	char* line = new char[256];
+	stream.getline(line, 256);
+	std::string* sline = new std::string(line);
+	width = sline->size();
+	while (!stream.eof())
+	{
+		lines->push_back(*sline);
+		if (sline->size() != width)
+			std::cout << "Bad Level Load\n";
+		stream.getline(line, 256);
+		delete sline;
+		sline = new std::string(line);
+	}
+
+	delete[] line;
+	delete sline;
+
+	// Allocate the tile grid.
+	_tiles = new std::vector<std::vector<Tile*>>(width, std::vector<Tile*>(lines->size()));
+
+	// Loop over every tile position,
+	for (int x = 0; x < _tiles->size(); x++)
+	{
+		for (int y = 0; y < _tiles->at(0).size(); y++)
+		{
+			// to load each tile.
+			char tileType = lines->at(x)[y];
+
+			// Edit: to work with my Tile system. - Jon
+			(*_tiles)[x][y] = new Tile(); 
+			(*_tiles)[x][y]->LoadTile(TileCharToType(tileType), sf::Vector2i(x, y), this);
+		}
+	}
+
+	delete lines;
+	// --- S2D PLATFORMER CODE END ---
+
 }
 
 void Game::LoadExtras() {
@@ -198,12 +263,14 @@ void Game::LoadExtras() {
 
 	_gameState = MENU;
 
+	_sound = new Sound;
+
 }
 
 void Game::UpdateEntities() {
 	// Every tick, reset deltaTime.
 	_deltaTime = _clock->restart().asSeconds();
-	
+
 	if (_scaredTimer > 0) {
 		_scaredTimer--;
 		if (!_scaredTimer) {
@@ -214,19 +281,22 @@ void Game::UpdateEntities() {
 	}
 
 	for (int i = 0; i < munchieAmount; i++) {
-		if(!_munchies[i]->IsEaten())	_munchies[i]->HandleCollision(_score, _pacman);
+		if (!_munchies[i]->IsEaten())	_munchies[i]->HandleCollision(_score, _pacman, this);
 	}
 
 	for (int i = 0; i < pelletAmount; i++) {
-		if (!_pellets[i]->IsEaten())	_pellets[i]->HandleCollision(_score, _pacman, this);
-	}
-	
-	for (int i = 0; i < ghostAmount; i++) {
-		_ghosts[i]->UpdateGhost();
-		_ghosts[i]->HandleCollision(_pacman);
+		if (!_pellets[i]->IsEaten()) {
+			_pellets[i]->UpdateSprite();
+			_pellets[i]->HandleCollision(_score, _pacman, this);
+		}
 	}
 
-	if (!_fruit->IsEaten())	_fruit->HandleCollision(_score, _pacman);
+	for (int i = 0; i < ghostAmount; i++) {
+		_ghosts[i]->UpdateGhost();
+		_ghosts[i]->HandleCollision(_pacman, this);
+	}
+
+	if (!_fruit->IsEaten())	_fruit->HandleCollision(_score, _pacman, this);
 
 	_pacman->UpdatePacman(_deltaTime);
 }
@@ -250,31 +320,20 @@ void Game::UpdateEvent() {
 		}
 
 		// PLAY - SPACEBAR
-		if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) && _gameState == MENU) {
-			if (_gameState != RUNNING) {
+		if (event.type == sf::Event::KeyPressed) {
+			if ((event.key.code == sf::Keyboard::Space) && _gameState == MENU) {
 				// Start the game 
-				_gameState = RUNNING;
-				_clock->restart();
-
+				_sound->PlayMusic("startingmusic.wav", 0);
+				_gameState = STARTING;
 			}
-		}
 
-		// PAUSE - P (Also checks if pauseButton is being held down)
-		if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::P)) && !_pauseButtonBuffer) {
-			if (_gameState == RUNNING) {
-				_gameState = PAUSED;
-				_pauseButtonBuffer = true;
-
-				_messageString->assign("GAME PAUSED");
-				_pauseMessage->setString(*_messageString);
-				ResetOrigin(_pauseMessage);
-				_pauseMessage->setPosition(_res.x / 2, _res.y / 2);
-				_messageString->append("\nPress P to continue.\n\nPress R to restart.");
-
-			}
-			else if (_gameState == PAUSED) {
-				_gameState = RUNNING;
-				_clock->restart();
+			if ((event.key.code == sf::Keyboard::P) && !_pauseButtonBuffer) {
+				if (_gameState == RUNNING) {
+					Pause();
+				}
+				else if (_gameState == PAUSED) {
+					UnPause();
+				}
 			}
 		}
 
@@ -282,6 +341,38 @@ void Game::UpdateEvent() {
 	}
 }
 
+void Game::StartGame() {
+	if (_sound->GetMusicState() != 2) { // 2 = Playing
+		_gameState = RUNNING;
+		_clock->restart();
+	}
+}
+
+void Game::Pause() {
+	_gameState = PAUSED;
+	_pauseButtonBuffer = true;
+
+	_messageString->assign("GAME PAUSED");
+	_pauseMessage->setString(*_messageString);
+	ResetOrigin(_pauseMessage);
+	_pauseMessage->setPosition(_res.x / 2, _res.y / 2);
+	_messageString->append("\nPress P to continue.\n\nPress R to restart.");
+	
+	_sound->PlaySound("pause.wav");
+}
+
+void Game::UnPause() {
+	_gameState = RUNNING;
+	_clock->restart();
+	_sound->PlaySound("unpause.wav");
+}
+
+void Game::FreezeGame(const int& time) {
+	if (_gameState == FROZEN) return;
+
+	_gameState = FROZEN;
+	_timeFrozen = time;
+}
 
 void Game::ScareGhosts() {
 	for (int i = 0; i < ghostAmount; i++) {
@@ -290,6 +381,46 @@ void Game::ScareGhosts() {
 	
 	_scaredTimer = scaredTime;
 
+}
+
+void Game::PlaySound(const std::string& input) {
+	_sound->PlaySound(input);
+}
+
+TileType Game::TileCharToType(char& type) {
+	std::cout << "\nTileCharToType: " << type << std::endl;
+	switch (type) {
+		case 'P':
+			return PACMAN;
+			break;
+		case '#':
+			return MUNCHIE;
+			break;
+		case '@':
+			return PELLET;
+			break;
+		case 'G':
+			return GHOST;
+			break;
+		case 'D':
+			return GHOSTDOOR;
+			break;
+		case 'F':
+			return FRUIT;
+			break;
+		case 'S':
+			return WALLS;
+			break;
+		case 'T':
+			return WALLT;
+			break;
+		case 'C':
+			return WALLC;
+			break;
+		case 'E':
+			return WALLE;
+			break;
+	}
 }
 
 

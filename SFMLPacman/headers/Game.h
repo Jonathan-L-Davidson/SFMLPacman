@@ -1,6 +1,7 @@
 #pragma once
 #include "Global.hpp"
 #include "Entities.h"
+#include "Tile.h"
 
 class Game {
 
@@ -12,12 +13,15 @@ class Game {
 
 		PowerPellet* _pellets[pelletAmount];
 
-
 		Ghost* _ghosts[ghostAmount];
 
 		Fruit* _fruit;
 
-		enum GameState { RUNNING = 1, PAUSED, MENU, QUIT}; // Used to determine how the game is being used. RUNNING by default is 1, the rest go up in increments.
+		Sound* _sound;
+
+		int _timeFrozen; // Used to determine how long the game should be frozen for.
+
+		std::vector<std::vector<Tile*>>* _tiles;
 
 		// Window and viewport values including a clock definition.
 		sf::RenderWindow* _window;
@@ -36,6 +40,8 @@ class Game {
 
 		Resolution _res; // Resolution based from the global definition.
 
+		enum GameState { RUNNING, STARTING, PAUSED, FROZEN, MENU, QUIT }; // Used to determine how the game is being used.
+
 		GameState _gameState; // Enum definiton.
 		
 		float _deltaTime; // Used for smoothing out gameplay based on the framerate.
@@ -45,8 +51,13 @@ class Game {
 		void LoadEntities(); // Load the entities.
 		void LoadText();   // Load the text.
 		void LoadWindow(); // Load the window.
+		void LoadLevel(); // Load the game's level.
 		void LoadExtras(); // Misc/Unsorted things.
 
+		void Pause();
+		void UnPause();
+
+		void StartGame();
 		void UpdateEntities();
 		void UpdateEvent();
 
@@ -64,9 +75,14 @@ class Game {
 		void Update(); // This is called every frame. Only use this for processing data, treat it like a looping main().
 		void Draw(); // Used to render each object each frame.
 		void PauseGame(); // Public call to pause the game if required.
-		
+		void FreezeGame(const int& time); // Freeze the game for effects.
+
+		void PlaySound(const std::string& input);
 
 		sf::Text* ResetOrigin(sf::Text* text);
+
+		TileType TileCharToType(char& type);
+		Tile GetTile(const sf::Vector2i& pos) { return *(*_tiles)[pos.x][pos.y]; }; // Very weird to dereference it as a pointer, but it works.
 
 };
 

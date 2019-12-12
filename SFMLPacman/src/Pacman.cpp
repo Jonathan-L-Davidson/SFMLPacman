@@ -17,10 +17,6 @@ void Pacman::LoadPacman()
 	_keyframeCount = 8;
 	_keyframeDelay = 1;
 
-	buffer.loadFromFile(_resourceDir + _entityName + "_death.ogg");
-
-	_deathSound.setBuffer(buffer);
-
 	LoadEntity();
 
 }
@@ -92,7 +88,7 @@ void Pacman::PlayDeathAnim() {
 	_entitySourceRect = sf::IntRect(_deathKeyframePos, _entityDirection, _entitySize.x, _entitySize.y);
 }
 
-void Pacman::Death() {
+void Pacman::Death(Game* game) {
 
 	std::cout << std::endl << _entityName << " dies!\n";
 

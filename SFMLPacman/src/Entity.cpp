@@ -1,5 +1,6 @@
 #include "headers/Global.hpp"
 #include "headers/Entities.h"
+#include "headers/Game.h"
 
 
 Entity::Entity() {
@@ -75,19 +76,19 @@ void Entity::SetPosition(sf::Vector2f pos) {
 	_entitySprite.setPosition(pos);
 }
 
-void Entity::HandleCollision(int& score, Entity* entity) {
+void Entity::HandleCollision(int& score, Entity* entity, Game* game) {
 
 	if (GetSprite().getGlobalBounds().intersects(entity->GetSprite().getGlobalBounds())) {
-		OnHit(score);
+		OnHit(score, game);
 	}
 
 }
 
-void Entity::OnHit(int& score) {
+void Entity::OnHit(int& score, Game* game) {
 	return; // Do nothing.
 }
 
-void Entity::Death() {
+void Entity::Death(Game* game) {
 	std::cout << std::endl << _entityName << " dies!\n";
 	_entityStat = DEAD;
 }

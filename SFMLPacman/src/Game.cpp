@@ -109,6 +109,12 @@ void Game::Draw() {
 		_window->draw(_pacman->GetSprite());
 		if (!_fruit->IsEaten())	_window->draw(_fruit->GetSprite());
 		
+		for (int y = 0; y < _tiles->size(); y++) {
+			for (int x = 0; x < (*_tiles)[y].size(); x++) {
+				_window->draw((*_tiles)[y].at(x)->GetSprite());
+			}
+		}
+
 
 		if (_gameState == PAUSED) {
 			_window->draw(*_menuBackground);
@@ -203,6 +209,10 @@ void Game::LoadEntities() {
 
 void Game::LoadLevel() {
 
+	_dummyTile = new Tile;
+	char defaultTile = '#';
+	_dummyTile->LoadTile(defaultTile, sf::Vector2i(-5, -5), this);
+
 	// Used from S2D Platformer.
 
 	// --- S2D PLATFORMER CODE START ---
@@ -240,18 +250,25 @@ void Game::LoadLevel() {
 	{
 		for (int x = 0; x < width; x++)
 		{
+			// Edit: to work with my Tile system. - Jon	
 			// to load each tile.
 			char tileType = (*lines)[y].at(x);
 
-			// Edit: to work with my Tile system. - Jon
-			(*_tiles)[x][y] = new Tile(); 
-			(*_tiles)[x][y]->LoadTile(TileCharToType(tileType), sf::Vector2i(x, y), this);
+			(*_tiles).at(x).at(y) = new Tile(); 
+			(*_tiles).at(x).at(y)->LoadTile(tileType, sf::Vector2i(x, y), this);
 		}
 	}
 
 	delete lines;
 	// --- S2D PLATFORMER CODE END ---
 
+	for (int y = 0; y < _tiles->size(); y++) {
+		for (int x = 0; x < (*_tiles)[y].size(); x++) {
+			(*_tiles)[y].at(x)->InitSprite();
+
+			(*_tiles)[y].at(x)->HandleRotation(this);
+		}
+	}
 }
 
 void Game::LoadExtras() {
@@ -388,44 +405,15 @@ void Game::PlaySound(const std::string& input) {
 	_sound->PlaySound(input);
 }
 
-TileType Game::TileCharToType(char& type) {
-	switch (type) {
-		case 'P':
-			return PACMAN;
-			break;
-		case '#':
-			return MUNCHIE;
-			break;
-		case '@':
-			return PELLET;
-			break;
-		case 'G':
-			return GHOST;
-			break;
-		case 'D':
-			return GHOSTDOOR;
-			break;
-		case 'F':
-			return FRUIT;
-			break;
-		case 'S':
-			return WALLS;
-			break;
-		case 'T':
-			return WALLT;
-			break;
-		case 'C':
-			return WALLC;
-			break;
-		case 'E':
-			return WALLE;
-			break;
-		default:
-			return MUNCHIE;
-			break;
+Tile Game::GetTile(const sf::Vector2i& pos) {
+	try {
+		return *(*_tiles).at(pos.y).at(pos.x);
 	}
+	catch (...) {
+		return *_dummyTile;
+	}
+	
 }
-
 
 sf::Text* Game::ResetOrigin(sf::Text* text) {
 		sf::FloatRect textRect = text->getLocalBounds();

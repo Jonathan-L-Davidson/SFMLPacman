@@ -19,29 +19,32 @@ class Tile {
 		sf::Vector2i _position;
 
 		struct Neighbors {
-			bool north;
-			bool east;
-			bool south;
-			bool west;
+			bool north = false;
+			bool east = false;
+			bool south = false;
+			bool west = false;
 		};
 
 		Neighbors _neighbors;
 
 	public:
-		void LoadTile(TileType type, sf::Vector2i pos, Game* game);
+		void LoadTile(char& type, sf::Vector2i pos, Game* game);
 
+		sf::Sprite GetSprite() const { return _sprite; };
 		void InitSprite();
 
 		void GetNeighbors(Game* game);
 		void SetWallRotation();
 
+		void HandleRotation(Game* game);
 
-		void SetType(TileType& type);
-		TileType GetType() const { return _type; };
-		void SetPosition(sf::Vector2i pos);
+		void SetType(char& type);
+		TileType GetType() { return _type; };
+		TileType ConvertCharToType(char& type);
+		void SetPosition(sf::Vector2i& pos);
 		void SetRotation(const int degrees) {};
 		
-		bool IsWall(const TileType& type) const { return type == WALLS || type == WALLT || _type == WALLC || _type == WALLE; };
+		bool IsWall(const TileType& type);
 
 };
 

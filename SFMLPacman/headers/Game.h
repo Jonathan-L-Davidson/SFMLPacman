@@ -22,6 +22,7 @@ class Game {
 		int _timeFrozen; // Used to determine how long the game should be frozen for.
 
 		std::vector<std::vector<Tile*>>* _tiles;
+		Tile* _dummyTile; // Used for any incorrect tiles/methods.
 
 		// Window and viewport values including a clock definition.
 		sf::RenderWindow* _window;
@@ -82,7 +83,7 @@ class Game {
 		sf::Text* ResetOrigin(sf::Text* text);
 
 		TileType TileCharToType(char& type);
-		Tile GetTile(const sf::Vector2i& pos) { return *(*_tiles)[pos.x][pos.y]; }; // Very weird to dereference it as a pointer, but it works.
+		Tile GetTile(const sf::Vector2i& pos); // Very weird to dereference it as a pointer, but it works.
 
 };
 

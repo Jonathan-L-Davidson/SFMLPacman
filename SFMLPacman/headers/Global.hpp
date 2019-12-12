@@ -16,8 +16,8 @@
 
 class Resolution {
 	public:
-		float x = 800.0f;
-		float y = 600.0f;
+		float x = 864.0f;
+		float y = 672.0f;
 };
 
 enum GhostType {

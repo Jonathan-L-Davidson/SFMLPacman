@@ -25,22 +25,26 @@ void Tile::InitSprite() {
 }
 
 void Tile::GetNeighbors(Game* game) {
-	// Get north
-	if (IsWall(game->GetTile(sf::Vector2i(_position.x, _position.y - 1)).GetType()))	_neighbors.north = true;
-	// Get east
-	if (IsWall(game->GetTile(sf::Vector2i(_position.x + 1, _position.y)).GetType()))	_neighbors.east = true;
-	// Get south
-	if (IsWall(game->GetTile(sf::Vector2i(_position.x, _position.y + 1)).GetType())) {
-		std::cout << IsWall(game->GetTile(sf::Vector2i(_position.x, _position.y + 1)).GetType()) << "\nType: " << game->GetTile(sf::Vector2i(_position.x, _position.y + 1)).GetType() << "\n";
-		_neighbors.south = true;
-	}
-	// Get west
-	if (IsWall(game->GetTile(sf::Vector2i(_position.x - 1, _position.y)).GetType()))	_neighbors.west = true;
+
+	Tile* north	= game->GetTile(sf::Vector2i(_position.x, _position.y - 1));
+	Tile* east	= game->GetTile(sf::Vector2i(_position.x + 1, _position.y));
+	Tile* south	= game->GetTile(sf::Vector2i(_position.x, _position.y));
+	Tile* west	= game->GetTile(sf::Vector2i(_position.x - 1, _position.y + 1));
+	
+	TileType* nType = north->GetType();
+	TileType* eType = east->GetType();
+	TileType* sType = south->GetType();
+	TileType* wType = west->GetType();
+
+	IsWall(nType) ? _neighbors.north	= true	: _neighbors.north	= false;
+	IsWall(eType) ? _neighbors.east		= true	: _neighbors.east	= false;
+	IsWall(sType) ? _neighbors.south	= true	: _neighbors.south	= false;
+	IsWall(wType) ? _neighbors.west		= true	: _neighbors.west	= false;
 }
 
 void Tile::SetPosition(sf::Vector2i& pos) {
 	_position = pos;
-	_sprite.setPosition(pos.x * _size.x, pos.y * _size.y);
+	_sprite.setPosition((pos.x * _size.x)+(_size.x / 2), (pos.y * _size.y) + (_size.y / 2));
 }
 
 void Tile::SetWallRotation() {
@@ -86,8 +90,6 @@ void Tile::SetWallRotation() {
 			_sprite.setRotation(270); // Face north
 		}
 		break;
-	default:
-		break;
 	}
 }
 
@@ -130,14 +132,17 @@ TileType Tile::ConvertCharToType(char& type) {
 }
 
 void Tile::HandleRotation(Game* game) {
-	if (IsWall(_type)) {
+	if (IsWall(&_type)) {
 		GetNeighbors(game);
 		SetWallRotation();
 	}
 }
 
-bool Tile::IsWall(const TileType& type) {
-	if (type == WALLS || type == WALLT || _type == WALLC || _type == WALLE) {
-			return true;
+bool Tile::IsWall(TileType* type) {
+	if (*type == 6 || *type == 7 || *type == 8 || *type == 9) {
+		return true;
+	}
+	else {
+		return false;
 	}
 }

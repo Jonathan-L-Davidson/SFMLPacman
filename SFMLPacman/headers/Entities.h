@@ -152,8 +152,9 @@ class Munchie : public Edible {
 
 class Fruit : public Edible {
 	public:
-		Fruit(FruitType type);
+		Fruit(int type);
 		void OnHit(int& score, Game* game);
+		void SetType(int type);
 };
 
 class PowerPellet : public Edible {

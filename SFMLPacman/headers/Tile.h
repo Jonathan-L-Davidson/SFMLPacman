@@ -39,12 +39,12 @@ class Tile {
 		void HandleRotation(Game* game);
 
 		void SetType(char& type);
-		TileType GetType() { return _type; };
+		TileType* GetType() { return &_type; };
 		TileType ConvertCharToType(char& type);
 		void SetPosition(sf::Vector2i& pos);
 		void SetRotation(const int degrees) {};
 		
-		bool IsWall(const TileType& type);
+		bool IsWall(TileType* type);
 
 };
 

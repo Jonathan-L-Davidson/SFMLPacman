@@ -13,15 +13,25 @@ Game::Game() {
 }
 
 Game::~Game() {
+	
+	delete _pacman;
+	delete _munchies;
+	delete _pellets;
+	delete _ghosts;
+	delete _strawberry;
+	delete _apple;
+	delete _cherry;
+	delete _melon;
+	delete _sound;
+
+	delete _tiles;
+	delete _dummyTile;
 
 	delete _window;
 	delete _videomode;
 	delete _clock;
 	delete _event;
 	delete _view;
-
-	delete _munchies;
-	delete _pacman;
 
 	delete _font;
 	delete _pauseMessage;
@@ -37,7 +47,7 @@ void Game::LoadGame() {
 
 	LoadEntities(); // Misc/Unsorted things.
 
-	LoadLevel(); // Load Hell.
+	//LoadLevel();
 
 	LoadExtras(); // Misc/Unsorted things.
 
@@ -54,9 +64,19 @@ void Game::LoadGame() {
 		_pellets[i]->SetPosition(sf::Vector2f(rand() % static_cast<int>(X), rand() % static_cast<int>(Y)));
 	}
 
-	_fruit = new Fruit(APPLE);
+	
+	_strawberry = new Fruit(STRAWBERRY);
+	_strawberry->SetPosition(sf::Vector2f(300, 300));
 
-	_fruit->SetPosition(sf::Vector2f(300, 300));
+	_apple = new Fruit(APPLE);
+	_apple->SetPosition(sf::Vector2f(300, 332));
+
+	_cherry = new Fruit(CHERRY);
+	_cherry->SetPosition(sf::Vector2f(332, 300));
+
+	_melon = new Fruit(MELON);
+	_melon->SetPosition(sf::Vector2f(332, 332));
+	
 
 }
 
@@ -107,14 +127,18 @@ void Game::Draw() {
 		}
 
 		_window->draw(_pacman->GetSprite());
-		if (!_fruit->IsEaten())	_window->draw(_fruit->GetSprite());
+
+		if (!_strawberry->IsEaten())	{ _window->draw(_strawberry->GetSprite()); }
+		if (!_apple->IsEaten())			{ _window->draw(_apple->GetSprite()); }
+		if (!_cherry->IsEaten())		{ _window->draw(_cherry->GetSprite()); }
+		if (!_melon->IsEaten())			{ _window->draw(_melon->GetSprite()); }
 		
-		for (int y = 0; y < _tiles->size(); y++) {
-			for (int x = 0; x < (*_tiles)[y].size(); x++) {
+		/* // Tiles are disabled due to issues.
+		for (int y = 0; y < _tiles->size(); ++y) {
+			for (int x = 0; x < (*_tiles)[y].size(); ++x) {
 				_window->draw((*_tiles)[y].at(x)->GetSprite());
 			}
-		}
-
+		}*/
 
 		if (_gameState == PAUSED) {
 			_window->draw(*_menuBackground);
@@ -246,9 +270,9 @@ void Game::LoadLevel() {
 	_tiles = new std::vector<std::vector<Tile*>>(width, std::vector<Tile*>(lines->size()));
 
 	// Loop over every tile position,
-	for (int y = 0; y < _tiles->at(0).size(); y++)
+	for (int y = 0; y < _tiles->at(0).size(); ++y)
 	{
-		for (int x = 0; x < width; x++)
+		for (int x = 0; x < width; ++x)
 		{
 			// Edit: to work with my Tile system. - Jon	
 			// to load each tile.
@@ -262,8 +286,8 @@ void Game::LoadLevel() {
 	delete lines;
 	// --- S2D PLATFORMER CODE END ---
 
-	for (int y = 0; y < _tiles->size(); y++) {
-		for (int x = 0; x < (*_tiles)[y].size(); x++) {
+	for (int y = 0; y < _tiles->size(); ++y) {
+		for (int x = 0; x < (*_tiles)[y].size(); ++x) {
 			(*_tiles)[y].at(x)->InitSprite();
 
 			(*_tiles)[y].at(x)->HandleRotation(this);
@@ -299,7 +323,10 @@ void Game::UpdateEntities() {
 	}
 
 	for (int i = 0; i < munchieAmount; i++) {
-		if (!_munchies[i]->IsEaten())	_munchies[i]->HandleCollision(_score, _pacman, this);
+		if (!_munchies[i]->IsEaten()) {
+			_munchies[i]->UpdateSprite();
+			_munchies[i]->HandleCollision(_score, _pacman, this);
+		}
 	}
 
 	for (int i = 0; i < pelletAmount; i++) {
@@ -314,7 +341,12 @@ void Game::UpdateEntities() {
 		_ghosts[i]->HandleCollision(_pacman, this);
 	}
 
-	if (!_fruit->IsEaten())	_fruit->HandleCollision(_score, _pacman, this);
+	
+	if (!_strawberry->IsEaten())	{ _strawberry->HandleCollision(_score, _pacman, this); }
+	if (!_apple->IsEaten())			{ _apple->HandleCollision(_score, _pacman, this); }
+	if (!_cherry->IsEaten())		{ _cherry->HandleCollision(_score, _pacman, this); }
+	if (!_melon->IsEaten())			{ _melon->HandleCollision(_score, _pacman, this); }
+	
 
 	_pacman->UpdatePacman(_deltaTime);
 }
@@ -405,12 +437,12 @@ void Game::PlaySound(const std::string& input) {
 	_sound->PlaySound(input);
 }
 
-Tile Game::GetTile(const sf::Vector2i& pos) {
+Tile* Game::GetTile(const sf::Vector2i& pos) {
 	try {
-		return *(*_tiles).at(pos.y).at(pos.x);
+		return (*_tiles).at(pos.y).at(pos.x);
 	}
 	catch (...) {
-		return *_dummyTile;
+		return _dummyTile;
 	}
 	
 }

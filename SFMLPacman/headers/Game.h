@@ -15,7 +15,10 @@ class Game {
 
 		Ghost* _ghosts[ghostAmount];
 
-		Fruit* _fruit;
+		Fruit* _strawberry;
+		Fruit* _apple;
+		Fruit* _cherry;
+		Fruit* _melon;
 
 		Sound* _sound;
 
@@ -83,7 +86,7 @@ class Game {
 		sf::Text* ResetOrigin(sf::Text* text);
 
 		TileType TileCharToType(char& type);
-		Tile GetTile(const sf::Vector2i& pos); // Very weird to dereference it as a pointer, but it works.
+		Tile* GetTile(const sf::Vector2i& pos); // Very weird to dereference it as a pointer, but it works.
 
 };
 

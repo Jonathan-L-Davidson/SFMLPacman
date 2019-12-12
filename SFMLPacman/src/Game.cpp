@@ -218,6 +218,7 @@ void Game::LoadLevel() {
 	stream.getline(line, 256);
 	std::string* sline = new std::string(line);
 	width = sline->size();
+	std::cout << width;
 	while (!stream.eof())
 	{
 		lines->push_back(*sline);
@@ -235,12 +236,12 @@ void Game::LoadLevel() {
 	_tiles = new std::vector<std::vector<Tile*>>(width, std::vector<Tile*>(lines->size()));
 
 	// Loop over every tile position,
-	for (int x = 0; x < _tiles->size(); x++)
+	for (int y = 0; y < _tiles->at(0).size(); y++)
 	{
-		for (int y = 0; y < _tiles->at(0).size(); y++)
+		for (int x = 0; x < width; x++)
 		{
 			// to load each tile.
-			char tileType = lines->at(x)[y];
+			char tileType = (*lines)[y].at(x);
 
 			// Edit: to work with my Tile system. - Jon
 			(*_tiles)[x][y] = new Tile(); 
@@ -388,7 +389,6 @@ void Game::PlaySound(const std::string& input) {
 }
 
 TileType Game::TileCharToType(char& type) {
-	std::cout << "\nTileCharToType: " << type << std::endl;
 	switch (type) {
 		case 'P':
 			return PACMAN;
@@ -419,6 +419,9 @@ TileType Game::TileCharToType(char& type) {
 			break;
 		case 'E':
 			return WALLE;
+			break;
+		default:
+			return MUNCHIE;
 			break;
 	}
 }

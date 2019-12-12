@@ -1,10 +1,9 @@
 /x64
 /.vs
 
+*.vcxproj
 yeetusdeletus.zip
 
 *.zip
-
 Debug/
-
 Release/

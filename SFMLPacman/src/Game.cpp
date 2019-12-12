@@ -1,5 +1,7 @@
 #include "headers/Game.h"
 #include "headers/Entities.h"
+#include "headers/Game.h"
+#include "headers/Sound.h"
 #include <algorithm>
 #include <fstream>
 #include <cstdlib>
@@ -11,15 +13,25 @@ Game::Game() {
 }
 
 Game::~Game() {
+	
+	delete _pacman;
+	delete _munchies;
+	delete _pellets;
+	delete _ghosts;
+	delete _strawberry;
+	delete _apple;
+	delete _cherry;
+	delete _melon;
+	delete _sound;
+
+	delete _tiles;
+	delete _dummyTile;
 
 	delete _window;
 	delete _videomode;
 	delete _clock;
 	delete _event;
 	delete _view;
-
-	delete _munchies;
-	delete _pacman;
 
 	delete _font;
 	delete _pauseMessage;
@@ -35,6 +47,8 @@ void Game::LoadGame() {
 
 	LoadEntities(); // Misc/Unsorted things.
 
+	//LoadLevel();
+
 	LoadExtras(); // Misc/Unsorted things.
 
 	srand(time(NULL));
@@ -44,16 +58,25 @@ void Game::LoadGame() {
 		_munchies[i]->SetPosition(sf::Vector2f(rand() % static_cast<int>(X), rand() % static_cast<int>(Y)));
 	}
 
-	srand(time(NULL));
 	for (int i = 0; i < pelletAmount; i++) {
 		float& X = _res.x;
 		float& Y = _res.y;
 		_pellets[i]->SetPosition(sf::Vector2f(rand() % static_cast<int>(X), rand() % static_cast<int>(Y)));
 	}
 
-	_fruit = new Fruit(APPLE);
+	
+	_strawberry = new Fruit(STRAWBERRY);
+	_strawberry->SetPosition(sf::Vector2f(300, 300));
 
-	_fruit->SetPosition(sf::Vector2f(300, 300));
+	_apple = new Fruit(APPLE);
+	_apple->SetPosition(sf::Vector2f(300, 332));
+
+	_cherry = new Fruit(CHERRY);
+	_cherry->SetPosition(sf::Vector2f(332, 300));
+
+	_melon = new Fruit(MELON);
+	_melon->SetPosition(sf::Vector2f(332, 332));
+	
 
 }
 
@@ -63,10 +86,20 @@ void Game::Update() {
 
 		UpdateEvent();
 
-		// MAIN GAME LOOP.
-		if (_gameState == RUNNING && _gameState != PAUSED)
-		{
-			UpdateEntities();
+		switch (_gameState) {
+			case STARTING:
+				StartGame();
+				break;
+			case FROZEN:
+				if (_timeFrozen <= 0) {
+					_gameState = RUNNING;
+					_clock->restart();
+				}
+				_timeFrozen--;
+				break;
+			case RUNNING:
+				UpdateEntities();
+				break;
 		}
 
 		Draw();
@@ -94,8 +127,18 @@ void Game::Draw() {
 		}
 
 		_window->draw(_pacman->GetSprite());
-		if (!_fruit->IsEaten())	_window->draw(_fruit->GetSprite());
+
+		if (!_strawberry->IsEaten())	{ _window->draw(_strawberry->GetSprite()); }
+		if (!_apple->IsEaten())			{ _window->draw(_apple->GetSprite()); }
+		if (!_cherry->IsEaten())		{ _window->draw(_cherry->GetSprite()); }
+		if (!_melon->IsEaten())			{ _window->draw(_melon->GetSprite()); }
 		
+		/* // Tiles are disabled due to issues.
+		for (int y = 0; y < _tiles->size(); ++y) {
+			for (int x = 0; x < (*_tiles)[y].size(); ++x) {
+				_window->draw((*_tiles)[y].at(x)->GetSprite());
+			}
+		}*/
 
 		if (_gameState == PAUSED) {
 			_window->draw(*_menuBackground);
@@ -169,22 +212,86 @@ void Game::LoadEntities() {
 		int typeGetter = (i + 1) % 4;
 
 		switch (typeGetter) {
-			case 0:
-				type = BLINKY;
-				break;
-			case 1:
-				type = INKY;
-				break;
-			case 2:
-				type = PINKY;
-				break;
-			case 3:
-				type = CLYDE;
-				break;
+		case 0:
+			type = BLINKY;
+			break;
+		case 1:
+			type = INKY;
+			break;
+		case 2:
+			type = PINKY;
+			break;
+		case 3:
+			type = CLYDE;
+			break;
 		}
 
 		_ghosts[i] = new Ghost(type);
 		_ghosts[i]->SetPosition(sf::Vector2f(50.f * i + 32, _res.y / 2));
+	}
+}
+
+void Game::LoadLevel() {
+
+	_dummyTile = new Tile;
+	char defaultTile = '#';
+	_dummyTile->LoadTile(defaultTile, sf::Vector2i(-5, -5), this);
+
+	// Used from S2D Platformer.
+
+	// --- S2D PLATFORMER CODE START ---
+	// Load the level and ensure all of the lines are the same length.
+	int width;
+	std::vector<std::string>* lines = new std::vector<std::string>();
+	std::fstream stream;
+	std::stringstream ss;
+	ss << _resourceDir + "level.txt";
+	stream.open(ss.str(), std::fstream::in);
+
+	char* line = new char[256];
+	stream.getline(line, 256);
+	std::string* sline = new std::string(line);
+	width = sline->size();
+	std::cout << width;
+	while (!stream.eof())
+	{
+		lines->push_back(*sline);
+		if (sline->size() != width)
+			std::cout << "Bad Level Load\n";
+		stream.getline(line, 256);
+		delete sline;
+		sline = new std::string(line);
+	}
+
+	delete[] line;
+	delete sline;
+
+	// Allocate the tile grid.
+	_tiles = new std::vector<std::vector<Tile*>>(width, std::vector<Tile*>(lines->size()));
+
+	// Loop over every tile position,
+	for (int y = 0; y < _tiles->at(0).size(); ++y)
+	{
+		for (int x = 0; x < width; ++x)
+		{
+			// Edit: to work with my Tile system. - Jon	
+			// to load each tile.
+			char tileType = (*lines)[y].at(x);
+
+			(*_tiles).at(x).at(y) = new Tile(); 
+			(*_tiles).at(x).at(y)->LoadTile(tileType, sf::Vector2i(x, y), this);
+		}
+	}
+
+	delete lines;
+	// --- S2D PLATFORMER CODE END ---
+
+	for (int y = 0; y < _tiles->size(); ++y) {
+		for (int x = 0; x < (*_tiles)[y].size(); ++x) {
+			(*_tiles)[y].at(x)->InitSprite();
+
+			(*_tiles)[y].at(x)->HandleRotation(this);
+		}
 	}
 }
 
@@ -198,12 +305,14 @@ void Game::LoadExtras() {
 
 	_gameState = MENU;
 
+	_sound = new Sound;
+
 }
 
 void Game::UpdateEntities() {
 	// Every tick, reset deltaTime.
 	_deltaTime = _clock->restart().asSeconds();
-	
+
 	if (_scaredTimer > 0) {
 		_scaredTimer--;
 		if (!_scaredTimer) {
@@ -214,19 +323,30 @@ void Game::UpdateEntities() {
 	}
 
 	for (int i = 0; i < munchieAmount; i++) {
-		if(!_munchies[i]->IsEaten())	_munchies[i]->HandleCollision(_score, _pacman);
+		if (!_munchies[i]->IsEaten()) {
+			_munchies[i]->UpdateSprite();
+			_munchies[i]->HandleCollision(_score, _pacman, this);
+		}
 	}
 
 	for (int i = 0; i < pelletAmount; i++) {
-		if (!_pellets[i]->IsEaten())	_pellets[i]->HandleCollision(_score, _pacman, this);
-	}
-	
-	for (int i = 0; i < ghostAmount; i++) {
-		_ghosts[i]->UpdateGhost();
-		_ghosts[i]->HandleCollision(_pacman);
+		if (!_pellets[i]->IsEaten()) {
+			_pellets[i]->UpdateSprite();
+			_pellets[i]->HandleCollision(_score, _pacman, this);
+		}
 	}
 
-	if (!_fruit->IsEaten())	_fruit->HandleCollision(_score, _pacman);
+	for (int i = 0; i < ghostAmount; i++) {
+		_ghosts[i]->UpdateGhost();
+		_ghosts[i]->HandleCollision(_pacman, this);
+	}
+
+	
+	if (!_strawberry->IsEaten())	{ _strawberry->HandleCollision(_score, _pacman, this); }
+	if (!_apple->IsEaten())			{ _apple->HandleCollision(_score, _pacman, this); }
+	if (!_cherry->IsEaten())		{ _cherry->HandleCollision(_score, _pacman, this); }
+	if (!_melon->IsEaten())			{ _melon->HandleCollision(_score, _pacman, this); }
+	
 
 	_pacman->UpdatePacman(_deltaTime);
 }
@@ -250,31 +370,20 @@ void Game::UpdateEvent() {
 		}
 
 		// PLAY - SPACEBAR
-		if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) && _gameState == MENU) {
-			if (_gameState != RUNNING) {
+		if (event.type == sf::Event::KeyPressed) {
+			if ((event.key.code == sf::Keyboard::Space) && _gameState == MENU) {
 				// Start the game 
-				_gameState = RUNNING;
-				_clock->restart();
-
+				_sound->PlayMusic("startingmusic.wav", 0);
+				_gameState = STARTING;
 			}
-		}
 
-		// PAUSE - P (Also checks if pauseButton is being held down)
-		if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::P)) && !_pauseButtonBuffer) {
-			if (_gameState == RUNNING) {
-				_gameState = PAUSED;
-				_pauseButtonBuffer = true;
-
-				_messageString->assign("GAME PAUSED");
-				_pauseMessage->setString(*_messageString);
-				ResetOrigin(_pauseMessage);
-				_pauseMessage->setPosition(_res.x / 2, _res.y / 2);
-				_messageString->append("\nPress P to continue.\n\nPress R to restart.");
-
-			}
-			else if (_gameState == PAUSED) {
-				_gameState = RUNNING;
-				_clock->restart();
+			if ((event.key.code == sf::Keyboard::P) && !_pauseButtonBuffer) {
+				if (_gameState == RUNNING) {
+					Pause();
+				}
+				else if (_gameState == PAUSED) {
+					UnPause();
+				}
 			}
 		}
 
@@ -282,6 +391,38 @@ void Game::UpdateEvent() {
 	}
 }
 
+void Game::StartGame() {
+	if (_sound->GetMusicState() != 2) { // 2 = Playing
+		_gameState = RUNNING;
+		_clock->restart();
+	}
+}
+
+void Game::Pause() {
+	_gameState = PAUSED;
+	_pauseButtonBuffer = true;
+
+	_messageString->assign("GAME PAUSED");
+	_pauseMessage->setString(*_messageString);
+	ResetOrigin(_pauseMessage);
+	_pauseMessage->setPosition(_res.x / 2, _res.y / 2);
+	_messageString->append("\nPress P to continue.\n\nPress R to restart.");
+	
+	_sound->PlaySound("pause.wav");
+}
+
+void Game::UnPause() {
+	_gameState = RUNNING;
+	_clock->restart();
+	_sound->PlaySound("unpause.wav");
+}
+
+void Game::FreezeGame(const int& time) {
+	if (_gameState == FROZEN) return;
+
+	_gameState = FROZEN;
+	_timeFrozen = time;
+}
 
 void Game::ScareGhosts() {
 	for (int i = 0; i < ghostAmount; i++) {
@@ -292,6 +433,19 @@ void Game::ScareGhosts() {
 
 }
 
+void Game::PlaySound(const std::string& input) {
+	_sound->PlaySound(input);
+}
+
+Tile* Game::GetTile(const sf::Vector2i& pos) {
+	try {
+		return (*_tiles).at(pos.y).at(pos.x);
+	}
+	catch (...) {
+		return _dummyTile;
+	}
+	
+}
 
 sf::Text* Game::ResetOrigin(sf::Text* text) {
 		sf::FloatRect textRect = text->getLocalBounds();

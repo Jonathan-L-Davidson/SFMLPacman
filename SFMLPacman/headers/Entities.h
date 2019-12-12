@@ -1,7 +1,8 @@
 #pragma once
 #include "Global.hpp"
 
-struct Game;
+class Sound;
+class Game;
 
 class Entity {
 
@@ -74,10 +75,10 @@ class Entity {
 		
 		void UpdateSprite(); // Used for sprite rendering, similar to Draw except it modies the entity sprite.
 
-		virtual void HandleCollision(int& score, Entity* entity);
-		virtual void OnHit(int& score);
+		virtual void HandleCollision(int& score, Entity* entity, Game* game);
+		virtual void OnHit(int& score, Game* game);
 
-		virtual void Death();
+		virtual void Death(Game* game);
 
 
 };
@@ -89,18 +90,14 @@ class Pacman : public Entity {
 
 		void virtual HandleInput(float &deltaTime); // Handle player input.
 
-		sf::SoundBuffer buffer; // Sound buffering for pacman.
-		sf::Sound _deathSound; // His death sound.
-
-
 	public:
 
 		Pacman();
-		virtual ~Pacman();
+		~Pacman();
 
 		void LoadPacman(); // Assign values for pacman.
 		void UpdatePacman(float deltaTime); // Update pacman every tick.
-		void Death(); // When pacman dies.
+		void Death(Game* game); // When pacman dies.
 		void PlayDeathAnim(); // Render during pacman's death.
 
 };
@@ -114,7 +111,7 @@ class Ghost : public Entity {
 		bool _scared;
 
 		void HandleAI();
-		void Death();
+		void Death(Game* game);
 
 		sf::Texture _ghostScaredTexture;
 		sf::Texture _ghostDeadTexture;
@@ -124,13 +121,13 @@ class Ghost : public Entity {
 		Ghost(GhostType ghostType); // To do. Do math to make it so you can dynamically increase the amoutn of ghosts.
 		~Ghost();
 		
-		void Revive();
+		void Revive(Game* game);
 
 		void SetScared();
 		void CalmGhost();
 		void UpdateGhost();
-		void HandleCollision(Entity* entity);
-		void OnHit(Entity* entity);
+		void HandleCollision(Entity* entity, Game* game);
+		void OnHit(Entity* entity, Game* game);
 };
 
 class Edible : public Entity {
@@ -143,7 +140,7 @@ class Edible : public Entity {
 		Edible();
 		void LoadEdible();
 		std::string GetName() const { return _entityName; };
-		void OnHit(int& score);
+		void OnHit(int& score, Game* game);
 };
 
 class Munchie : public Edible {
@@ -155,7 +152,9 @@ class Munchie : public Edible {
 
 class Fruit : public Edible {
 	public:
-		Fruit(FruitType type);
+		Fruit(int type);
+		void OnHit(int& score, Game* game);
+		void SetType(int type);
 };
 
 class PowerPellet : public Edible {

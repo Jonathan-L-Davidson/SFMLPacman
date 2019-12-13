@@ -1,5 +1,5 @@
-#include "headers/Tile.h"
-#include "headers/Game.h"
+#include "Tile.h"
+#include "Game.h"
 
 void Tile::LoadTile(char& type, sf::Vector2i pos, Game* game) {
 

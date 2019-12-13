@@ -1,5 +1,5 @@
-#include "headers/UI.h"
-#include "headers/Global.hpp"
+#include "UI.h"
+#include "Global.hpp"
 #include <string>
 
 Resolution _res;

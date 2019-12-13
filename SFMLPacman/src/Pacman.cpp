@@ -1,4 +1,4 @@
-#include "headers/Entities.h"
+#include "Entities.h"
 
 Pacman::Pacman() {
 	LoadPacman();

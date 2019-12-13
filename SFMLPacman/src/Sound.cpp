@@ -1,4 +1,4 @@
-#include "headers/Sound.h"
+#include "Sound.h"
 
 Sound::Sound() {
 	_buffer = new sf::SoundBuffer;

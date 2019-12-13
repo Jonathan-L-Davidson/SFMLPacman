@@ -1,6 +1,6 @@
-#include "headers/Global.hpp"
-#include "headers/Entities.h"
-#include "headers/Game.h"
+#include "Global.hpp"
+#include "Entities.h"
+#include "Game.h"
 
 Ghost::Ghost(GhostType ghostType) {
 	_entityName = "ghost";

@@ -1,7 +1,7 @@
-#include "headers/Global.hpp"
-#include "headers/Entities.h"
-#include "headers/Game.h"
-#include "headers/Sound.h"
+#include "Global.hpp"
+#include "Entities.h"
+#include "Game.h"
+#include "Sound.h"
 
 Edible::Edible() {}
 

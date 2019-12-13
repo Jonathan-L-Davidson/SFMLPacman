@@ -1,7 +1,7 @@
-#include "headers/Game.h"
-#include "headers/Entities.h"
-#include "headers/Game.h"
-#include "headers/Sound.h"
+#include "Game.h"
+#include "Entities.h"
+#include "Game.h"
+#include "Sound.h"
 #include <algorithm>
 #include <fstream>
 #include <cstdlib>

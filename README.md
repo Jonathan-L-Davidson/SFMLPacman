@@ -16,6 +16,8 @@ Enjoy a classic game of a completely original game of Pacman! *Namco please don'
 
 ### Prerequisites
 
+You require Visual Studio 2019 in order to compile and run the solution.
+
 You need The latest version of the Microsoft Visual C++ 2015 Redistributable which you can get [here](https://www.microsoft.com/en-us/download/details.aspx?id=53840)
 
 

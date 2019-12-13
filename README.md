@@ -22,7 +22,7 @@ You need The latest version of the Microsoft Visual C++ 2015 Redistributable whi
 ### Installing
 
 #### Source:
-1. Simply download the code [here](https://github.com/Jonathan-L-Davidson/SFMLPacman.git).
+1. Simply download the code [here](https://github.com/Jonathan-L-Davidson/SFMLPacman/archive/master.zip).
 2. Unpack the files into where ever you'd like to put the game. 
 3. Open `SFMLPacman.sln`
 4. Press F5 or alternatively go to the `Debug` tab then select "Start Debugging" 

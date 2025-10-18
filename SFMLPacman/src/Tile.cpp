@@ -8,6 +8,17 @@ void Tile::LoadTile(char& type, sf::Vector2i pos, Game* game) {
 	SetType(type);
 	SetPosition(pos);
 
+	// New addition, some quick bandaid to allow spawning pellets and pacman on loading the level file.
+	switch (_type) { 
+		case MUNCHIE:
+		case PELLET:
+			game->CreateEdibleTile(this);
+			break;
+		case PACMAN:
+			game->GetPacman()->SetStartPosition(sf::Vector2f(_position.x * 32 + 16, _position.y * 32 + 16));
+			break;
+	}
+	
 }
 
 void Tile::SetType(char& type) {
@@ -28,8 +39,8 @@ void Tile::GetNeighbors(Game* game) {
 
 	Tile* north	= game->GetTile(sf::Vector2i(_position.x, _position.y - 1));
 	Tile* east	= game->GetTile(sf::Vector2i(_position.x + 1, _position.y));
-	Tile* south	= game->GetTile(sf::Vector2i(_position.x, _position.y));
-	Tile* west	= game->GetTile(sf::Vector2i(_position.x - 1, _position.y + 1));
+	Tile* south	= game->GetTile(sf::Vector2i(_position.x, _position.y + 1)); // New fix, I messed up the position checks
+	Tile* west = game->GetTile(sf::Vector2i(_position.x - 1, _position.y)); // Seemed to have had the +1 here.
 	
 	TileType* nType = north->GetType();
 	TileType* eType = east->GetType();
@@ -47,6 +58,7 @@ void Tile::SetPosition(sf::Vector2i& pos) {
 	_sprite.setPosition((pos.x * _size.x)+(_size.x / 2), (pos.y * _size.y) + (_size.y / 2));
 }
 
+// Edited switch case to fix orientation of the sprites.
 void Tile::SetWallRotation() {
 	switch (_type) {
 	case WALLS: // Facing north and south by default.
@@ -55,14 +67,17 @@ void Tile::SetWallRotation() {
 		}
 		break;
 	case WALLT: // Faces north, east and south by default.
+		if (_neighbors.north && _neighbors.east && _neighbors.west) {
+			_sprite.setRotation(270); // Face North, east and west.
+		}
 		if (_neighbors.east && _neighbors.south && _neighbors.west) {
 			_sprite.setRotation(90); // Face east, south and west.
 		}
 		if (_neighbors.south && _neighbors.west && _neighbors.north) {
-			_sprite.setRotation(180); // Face south, west and north.
+			_sprite.setRotation(0); // Face south, west and north.
 		}
 		if (_neighbors.west && _neighbors.north && _neighbors.south) {
-			_sprite.setRotation(270); // Face west, north and east.
+			_sprite.setRotation(180); // Face west, north and east.
 		}
 		break;
 	case WALLC: // Faces north and east by default.
@@ -81,13 +96,16 @@ void Tile::SetWallRotation() {
 
 	case WALLE: // Faces right by default.
 		if (_neighbors.north) {
-			_sprite.setRotation(90); // Face down.
+			_sprite.setRotation(270); // Face down.
 		}
 		if (_neighbors.east) {
-			_sprite.setRotation(180); // Face left.
+			_sprite.setRotation(0); // Face left.
 		}
 		if (_neighbors.south) {
-			_sprite.setRotation(270); // Face north
+			_sprite.setRotation(90); // Face north
+		}
+		if (_neighbors.west) {
+			_sprite.setRotation(180); // Face left.
 		}
 		break;
 	}
@@ -139,7 +157,7 @@ void Tile::HandleRotation(Game* game) {
 }
 
 bool Tile::IsWall(TileType* type) {
-	if (*type == 6 || *type == 7 || *type == 8 || *type == 9) {
+	if (*type == WALLS || *type == WALLC || *type == WALLE || *type == WALLT) { // Ensures to use the enumerator rather than hardcoded numbers
 		return true;
 	}
 	else {

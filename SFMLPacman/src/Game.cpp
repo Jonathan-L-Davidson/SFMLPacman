@@ -47,36 +47,37 @@ void Game::LoadGame() {
 
 	LoadEntities(); // Misc/Unsorted things.
 
-	//LoadLevel();
+	LoadLevel(); // New edit, enables level loading again
 
 	LoadExtras(); // Misc/Unsorted things.
 
-	srand(time(NULL));
-	for (int i = 0; i < munchieAmount; i++) {
-		float& X = _res.x;
-		float& Y = _res.y;
-		_munchies[i]->SetPosition(sf::Vector2f(rand() % static_cast<int>(X), rand() % static_cast<int>(Y)));
-	}
+	// New edit, removes random munchie and pellet spawns
+	//srand(time(NULL));
+	//for (int i = 0; i < munchieAmount; i++) {
+	//	float& X = _res.x;
+	//	float& Y = _res.y;
+	//	_munchies[i]->SetPosition(sf::Vector2f(rand() % static_cast<int>(X), rand() % static_cast<int>(Y)));
+	//}
 
-	for (int i = 0; i < pelletAmount; i++) {
-		float& X = _res.x;
-		float& Y = _res.y;
-		_pellets[i]->SetPosition(sf::Vector2f(rand() % static_cast<int>(X), rand() % static_cast<int>(Y)));
-	}
-
+	//for (int i = 0; i < pelletAmount; i++) {
+	//	float& X = _res.x;
+	//	float& Y = _res.y;
+	//	_pellets[i]->SetPosition(sf::Vector2f(rand() % static_cast<int>(X), rand() % static_cast<int>(Y)));
+	//}
+	// New edit end
 	
+	// New modification, moves fruits to top left corner.
 	_strawberry = new Fruit(STRAWBERRY);
-	_strawberry->SetPosition(sf::Vector2f(300, 300));
+	_strawberry->SetPosition(sf::Vector2f(1.0f * 32.0f, 32.0f)); 
 
 	_apple = new Fruit(APPLE);
-	_apple->SetPosition(sf::Vector2f(300, 332));
+	_apple->SetPosition(sf::Vector2f(2.0f * 32.0f, 32.0f));
 
 	_cherry = new Fruit(CHERRY);
-	_cherry->SetPosition(sf::Vector2f(332, 300));
+	_cherry->SetPosition(sf::Vector2f(3.0f * 32.0f, 32.0f));
 
 	_melon = new Fruit(MELON);
-	_melon->SetPosition(sf::Vector2f(332, 332));
-	
+	_melon->SetPosition(sf::Vector2f(4.0f * 32.0f, 32.0f));
 
 }
 
@@ -114,13 +115,19 @@ void Game::Draw() {
 	// Drawing objects goes here!
 	if (_gameState != MENU) {
 
+		// New edit, quick bandaid fix to allow a varied size of munchies and pellets to spawn
 		for (int i = 0; i < munchieAmount; i++) {
-			if (!_munchies[i]->IsEaten())	_window->draw(_munchies[i]->GetSprite());
+			if (Edible* edible = _munchies[i]) {
+				if (!edible->IsEaten())	_window->draw(edible->GetSprite());
+			}
 		}
 
 		for (int i = 0; i < pelletAmount; i++) {
-			if (!_pellets[i]->IsEaten())	_window->draw(_pellets[i]->GetSprite());
+			if (Edible* edible = _pellets[i]) {
+				if (!edible->IsEaten())	_window->draw(edible->GetSprite());
+			}
 		}
+		// New edit end
 
 		for (int i = 0; i < ghostAmount; i++) {
 			_window->draw(_ghosts[i]->GetSprite());
@@ -133,12 +140,14 @@ void Game::Draw() {
 		if (!_cherry->IsEaten())		{ _window->draw(_cherry->GetSprite()); }
 		if (!_melon->IsEaten())			{ _window->draw(_melon->GetSprite()); }
 		
-		/* // Tiles are disabled due to issues.
-		for (int y = 0; y < _tiles->size(); ++y) {
-			for (int x = 0; x < (*_tiles)[y].size(); ++x) {
-				_window->draw((*_tiles)[y].at(x)->GetSprite());
+		// New modification, uncomments this section to draw tiles.
+		if (_tiles) {
+			for (int y = 0; y < _tiles->size(); ++y) {
+				for (int x = 0; x < (*_tiles)[y].size(); ++x) {
+					_window->draw((*_tiles)[y].at(x)->GetSprite());
+				}
 			}
-		}*/
+		}
 
 		if (_gameState == PAUSED) {
 			_window->draw(*_menuBackground);
@@ -198,13 +207,15 @@ void Game::LoadEntities() {
 
 	_pacman = new Pacman;
 
-	for (int i = 0; i < munchieAmount; i++) {
-		_munchies[i] = new Munchie;
-	}
+	// New edit, stops allocating a large list of munchies and pellets, moving them to the load level function
+	//for (int i = 0; i < munchieAmount; i++) {
+	//	_munchies[i] = new Munchie;
+	//}
 
-	for (int i = 0; i < pelletAmount; i++) {
-		_pellets[i] = new PowerPellet;
-	}
+	//for (int i = 0; i < pelletAmount; i++) {
+	//	_pellets[i] = new PowerPellet;
+	//}
+	// New edit end
 
 	for (int i = 0; i < ghostAmount; i++) {
 
@@ -227,7 +238,7 @@ void Game::LoadEntities() {
 		}
 
 		_ghosts[i] = new Ghost(type);
-		_ghosts[i]->SetPosition(sf::Vector2f(50.f * i + 32, _res.y / 2));
+		_ghosts[i]->SetPosition(sf::Vector2f((_res.x / 2 - ghostAmount * 32) + i * 32, _res.y / 2 - 30)); // Ghosts moved to center of level
 	}
 }
 
@@ -323,6 +334,7 @@ void Game::UpdateEntities() {
 	}
 
 	for (int i = 0; i < munchieAmount; i++) {
+		if (!_munchies[i]) break; // New sanity check to prevent null reference errors
 		if (!_munchies[i]->IsEaten()) {
 			_munchies[i]->UpdateSprite();
 			_munchies[i]->HandleCollision(_score, _pacman, this);
@@ -330,6 +342,7 @@ void Game::UpdateEntities() {
 	}
 
 	for (int i = 0; i < pelletAmount; i++) {
+		if (!_pellets[i]) break; // New sanity check to prevent null reference errors
 		if (!_pellets[i]->IsEaten()) {
 			_pellets[i]->UpdateSprite();
 			_pellets[i]->HandleCollision(_score, _pacman, this);
@@ -375,6 +388,7 @@ void Game::UpdateEvent() {
 				// Start the game 
 				_sound->PlayMusic("startingmusic.wav", 0);
 				_gameState = STARTING;
+				_pacman->ResetPosition(); // New edit, sets pacman's location on load
 			}
 
 			if ((event.key.code == sf::Keyboard::P) && !_pauseButtonBuffer) {
@@ -439,12 +453,34 @@ void Game::PlaySound(const std::string& input) {
 
 Tile* Game::GetTile(const sf::Vector2i& pos) {
 	try {
-		return (*_tiles).at(pos.y).at(pos.x);
+		return (*_tiles).at(pos.x).at(pos.y); // New edit, fixes the tile getting being inverted was returning .at(y).at(x)
 	}
 	catch (...) {
 		return _dummyTile;
 	}
 	
+}
+
+// New addition, simple solution to create a tile if munchie or pellet.
+void Game::CreateEdibleTile(Tile* tile)
+{
+	sf::Vector2i vec = tile->GetPosition() * 32;
+
+	switch (*tile->GetType()) {
+		case MUNCHIE:
+			if (munchieAmount <= munchieCount)	return;
+			_munchies[munchieCount] = new Munchie();
+			_munchies[munchieCount]->SetPosition(sf::Vector2f(vec.x + 16, vec.y + 16));
+			++munchieCount;
+			break;
+		case PELLET:
+			if (pelletAmount <= pelletCount)	return;
+			_pellets[pelletCount] = new PowerPellet();
+			_pellets[pelletCount]->SetPosition(sf::Vector2f(vec.x + 16, vec.y + 16));
+			++pelletCount;
+			break;
+	}
+
 }
 
 sf::Text* Game::ResetOrigin(sf::Text* text) {

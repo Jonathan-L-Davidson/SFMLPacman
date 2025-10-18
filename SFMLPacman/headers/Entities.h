@@ -84,8 +84,8 @@ class Entity {
 };
 
 class Pacman : public Entity {
-	protected:
-
+	private:
+		sf::Vector2f _startPos; // New edit for pacman to spawn in a specific location or when respawning
 		float _pacmanSpeed = 150.0f; // Pacman's movement speed.
 
 		void virtual HandleInput(float &deltaTime); // Handle player input.
@@ -100,6 +100,8 @@ class Pacman : public Entity {
 		void Death(Game* game); // When pacman dies.
 		void PlayDeathAnim(); // Render during pacman's death.
 
+		void ResetPosition() { SetPosition(_startPos); }; // New edit to allow it to reset pos.
+		void SetStartPosition(sf::Vector2f pos) { _startPos = pos; }; // Setter for start pos
 };
 
 class Ghost : public Entity {

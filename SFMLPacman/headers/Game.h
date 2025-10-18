@@ -5,13 +5,15 @@
 
 class Game {
 
-	protected:
+	private:
 		
 		Pacman* _pacman;
 
 		Munchie* _munchies[munchieAmount];
+		unsigned int munchieCount = 0; // Scuffed solution to allow me to load munchies without changing the main code.
 
 		PowerPellet* _pellets[pelletAmount];
+		unsigned int pelletCount = 0; // Same thing with munchies.
 
 		Ghost* _ghosts[ghostAmount];
 
@@ -88,5 +90,7 @@ class Game {
 		TileType TileCharToType(char& type);
 		Tile* GetTile(const sf::Vector2i& pos); // Very weird to dereference it as a pointer, but it works.
 
+		void CreateEdibleTile(Tile* tile); // New edit made to allow map file to load edible entities.
+		Pacman* GetPacman() { return _pacman; }; // New edit for getter for pacman.
 };
 

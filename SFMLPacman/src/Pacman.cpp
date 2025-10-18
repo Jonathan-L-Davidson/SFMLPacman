@@ -2,6 +2,7 @@
 
 Pacman::Pacman() {
 	LoadPacman();
+	ResetPosition();
 }
 
 Pacman::~Pacman()
@@ -81,7 +82,7 @@ void Pacman::PlayDeathAnim() {
 	if (_deathKeyframePos >= _deathKeyframeCount) {
 		//delete this;
 		_entityStat = DEAD;
-		SetPosition(sf::Vector2f(0.f, 0.f));
+		ResetPosition(); // New modification to set pacman to the respawn position.
 		return;
 	}
 

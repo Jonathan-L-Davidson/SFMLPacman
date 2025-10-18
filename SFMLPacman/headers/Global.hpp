@@ -48,6 +48,6 @@ enum TileType {
 };
 
 const int scaredTime = 500;
-const int munchieAmount = 50;
+const int munchieAmount = 600; // New modification to allow more to be spawned on the level
 const int pelletAmount = 5;
 const int ghostAmount = 4;

@@ -42,6 +42,7 @@ class Tile {
 		TileType* GetType() { return &_type; };
 		TileType ConvertCharToType(char& type);
 		void SetPosition(sf::Vector2i& pos);
+		sf::Vector2i& GetPosition() { return _position; }; // New addition for a getter for position
 		void SetRotation(const int degrees) {};
 		
 		bool IsWall(TileType* type);
